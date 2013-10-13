@@ -18,3 +18,5 @@ while ($row = $results->fetchArray()) {
 </ul>
 <?php list_ships($db); ?>
 <?php list_players($db); ?>
+<h2>Log</h2>
+<?php print_log($db); ?>

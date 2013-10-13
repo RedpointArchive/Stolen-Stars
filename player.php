@@ -42,7 +42,8 @@ if (!$result) die('No such player.');
   <strong>Willpower:</strong> <?php echo $result['willpower']; ?><br/>
   <strong>Alertness:</strong> <?php echo $result['alertness']; ?>
 </p>
-<a href="/">Back</a>
+<a href="/">Back</a> &bull; 
+<a href="/edit_player.php?id=<?php echo $result['id']; ?>">Edit</a>
 <h2>Biography</h2>
 <p><?php echo nl2br($result['bio']); ?></p>
 <h2>Past Events</h2>

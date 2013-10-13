@@ -8,6 +8,7 @@ SELECT
   place.notes,
   place.planet_id,
   ship.id AS ship_id,
+  ship.system_id AS system_id,
   ship.name AS ship_name
 FROM place
 LEFT JOIN ship ON ship.place_id = place.id
@@ -27,6 +28,16 @@ if ($result['ship_id'] !== null) {
 }
 ?>
 <p><?php echo nl2br($result['notes']); ?></p>
+<?php
+if ($result['planet_id'] !== null) {
+?>
 <a href="/planet.php?id=<?php echo $result['planet_id']; ?>">Back</a>
+<?php
+} else {
+?>
+<a href="/system.php?id=<?php echo $result['system_id']; ?>">Back</a>
+<?php
+}
+?>
 <?php list_players($db, "
 WHERE player.place_id = :param", $_GET['id']); ?>

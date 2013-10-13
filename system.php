@@ -4,7 +4,8 @@ include 'include.php';
 $stmt = $db->prepare("
 SELECT 
   system.id,
-  system.name
+  system.name,
+  system.notes
 FROM system
 WHERE system.id = :id");
 $stmt->bindValue(':id', $_GET['id']);
@@ -14,6 +15,7 @@ if (!$result) die('No such system.');
 
 ?>
 <h1><?php echo $result['name']; ?> System</h1>
+<p><?php echo nl2br($result['notes']); ?></p>
 <a href="/">Back</a>
 <h2>Planets</h2>
 <ul>

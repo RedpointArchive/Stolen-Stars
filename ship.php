@@ -48,5 +48,35 @@ if ($result['planet_id'] !== null) {
 }
 ?>
 <p><?php echo nl2br($result['notes']); ?></p>
+<?php
+if ($result['planet_id'] !== null) {
+?>
+<form action="/takeoff_ship.php?id=<?php echo $_GET['id']; ?>" method="post">
+<input type="submit" value="Take Off" />
+</form>
+<?php
+} else if ($result['system_id'] !== null) {
+?>
+<form action="/move_ship.php?id=<?php echo $_GET['id']; ?>" method="post">
+  <p>Land onto: <select name="target">
+  <?php
+    $planets = get_grouped_planets($db);
+    foreach ($planets as $key => $rows) {
+      if ($key != null) {
+        echo '<optgroup label="'.$key.'">';
+      }
+      foreach ($rows as $row) {
+        echo '<option value="'.$row['id'].'">'.$row['name'].'</option>';
+      }
+      if ($key != null) {
+        echo '</optgroup>';
+      }
+    }
+  ?>
+  </select> <input type="submit" /></p>
+</form>
+<?php
+}
+?>
 <?php list_players($db, "
 WHERE player.place_id = :param", $result['place_id']); ?>
