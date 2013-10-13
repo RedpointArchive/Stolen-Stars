@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set("Australia/Melbourne");
+
 include 'lib/log.php';
 include 'lib/player.php';
 include 'lib/planet.php';
