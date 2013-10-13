@@ -6,6 +6,7 @@ SELECT
   player.name,
   player.real_name,
   player.place_id,
+  player.stats_id,
   place.name as place_name,
   stats.bio,
   stats.past,
@@ -44,6 +45,8 @@ if (!$result) die('No such player.');
 </p>
 <a href="/">Back</a> &bull; 
 <a href="/edit_player.php?id=<?php echo $result['id']; ?>">Edit</a>
+<h2>Skills</h2>
+<?php list_skills($db, $result["stats_id"]); ?>
 <h2>Biography</h2>
 <p><?php echo nl2br($result['bio']); ?></p>
 <h2>Past Events</h2>
