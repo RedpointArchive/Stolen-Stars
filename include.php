@@ -6,6 +6,7 @@ include 'lib/planet.php';
 include 'lib/place.php';
 include 'lib/ship.php';
 include 'lib/skill.php';
+include 'lib/stats.php';
 
 if (!file_exists("db.sqlite3")) {
   $db = new SQLite3("db.sqlite3");

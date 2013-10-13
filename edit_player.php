@@ -10,6 +10,7 @@ SELECT
   player.stats_id,
   place.name as place_name,
   stats.bio,
+  stats.inventory,
   stats.past,
   stats.goal,
   stats.plot_points,
@@ -52,6 +53,7 @@ if (array_key_exists('submit', $_POST)) {
   UPDATE stats
   SET
     bio = :bio,
+    inventory = :inventory,
     past = :past,
     goal = :goal,
     plot_points = :plot_points,
@@ -65,6 +67,7 @@ if (array_key_exists('submit', $_POST)) {
   WHERE id = :id");
   $stmt->bindValue(':id', $stats_id);
   $stmt->bindValue(':bio', $_POST['bio']);
+  $stmt->bindValue(':inventory', $_POST['inventory']);
   $stmt->bindValue(':past', $_POST['past']);
   $stmt->bindValue(':goal', $_POST['goal']);
   $stmt->bindValue(':plot_points', $_POST['plot_points']);
@@ -153,6 +156,10 @@ if (array_key_exists('submit', $_POST)) {
 <h2>Future Goal</h2>
 <textarea name="goal" style="width: 80%;" rows="20">
 <?php echo $result['goal']; ?>
+</textarea>
+<h2>Inventory</h2>
+<textarea name="inventory" style="width: 80%;" rows="20">
+<?php echo $result['inventory']; ?>
 </textarea>
 <h2>SAVE CHANGES</h2>
 <input type="submit" name="submit" value="Save All Changes!" />

@@ -9,6 +9,7 @@ SELECT
   player.stats_id,
   place.name as place_name,
   stats.bio,
+  stats.inventory,
   stats.past,
   stats.goal,
   stats.plot_points,
@@ -47,6 +48,7 @@ if (!$result) die('No such player.');
 <a href="/edit_player.php?id=<?php echo $result['id']; ?>">Edit</a>
 <h2>Skills</h2>
 <?php list_skills($db, $result["stats_id"]); ?>
+<a href="/edit_skills.php?id=<?php echo $result['stats_id']; ?>">Edit</a>
 <h2>Biography</h2>
 <p><?php echo nl2br($result['bio']); ?></p>
 <h2>Past Events</h2>
@@ -78,6 +80,8 @@ if (!$result) die('No such player.');
   ?>
   </select> <input type="submit" /></p>
 </form>
+<h2>Inventory</h2>
+<p><?php echo nl2br($result['inventory']); ?></p>
 <h2>Journal Entries</h2>
 <?php
 $stmt = $db->prepare("SELECT * FROM journal WHERE player_id = :id ORDER BY created DESC");
