@@ -1,15 +1,24 @@
 <?php
 include 'include.php';
 
-function get_system_id($db, $planet_id) {
-  $stmt = $db->prepare("SELECT system_id FROM planet WHERE id = :id");
-  $stmt->bindValue(':id', $planet_id);
-  $results = $stmt->execute()->fetchArray();
-  return $results["system_id"];
-}
+$stmt = $db->prepare("
+SELECT 
+  planet.id,
+  planet.name,
+  planet.notes,
+  planet.system_id
+FROM planet
+WHERE planet.id = :id");
+$stmt->bindValue(':id', $_GET['id']);
+$results = $stmt->execute();
+$result = $results->fetchArray();
+if (!$result) die('No such planet.');
+
 ?>
-<h1>Places</h1>
-<a href="/system.php?id=<?php echo get_system_id($db, $_GET['id']); ?>">Back</a>
+<h1><?php echo $result['name']; ?></h1>
+<p><?php echo nl2br($result['notes']); ?></p>
+<a href="/system.php?id=<?php echo $result['system_id']; ?>">Back</a>
+<h2>Places</h2>
 <ul>
 <?php
 $stmt = $db->prepare("SELECT * FROM place WHERE planet_id = :id");

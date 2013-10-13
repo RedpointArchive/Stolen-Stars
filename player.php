@@ -6,8 +6,20 @@ SELECT
   player.name,
   player.real_name,
   player.place_id,
-  place.name as place_name
+  place.name as place_name,
+  stats.bio,
+  stats.past,
+  stats.goal,
+  stats.plot_points,
+  stats.wounds,
+  stats.stun,
+  stats.strength,
+  stats.agility,
+  stats.intelligence,
+  stats.willpower,
+  stats.alertness
 FROM player
+LEFT JOIN stats ON player.stats_id = stats.id
 LEFT JOIN place ON place.id = player.place_id
 WHERE player.id = :id");
 $stmt->bindValue(':id', $_GET['id']);
@@ -15,10 +27,29 @@ $results = $stmt->execute();
 $result = $results->fetchArray();
 if (!$result) die('No such player.');
 ?>
-<h1><?php echo $result['name'] ?></h1>
+<h1><?php echo $result['name'] ?> (played by <?php echo $result['real_name'] ?>)</h1>
+<p>
+  <strong>Plot Points:</strong> <?php echo $result['plot_points']; ?><br/>
+  <br/>
+  <strong>Life Points:</strong> <?php echo player_get_life_points($result); ?><br/>
+  <strong>Wounds:</strong> <?php echo $result['wounds']; ?><br/>
+  <strong>Stun:</strong> <?php echo $result['stun']; ?><br/>
+  <strong>Initiative:</strong> <?php echo player_get_initiative($result); ?><br/>
+  <br/>
+  <strong>Strength:</strong> <?php echo $result['strength']; ?><br/>
+  <strong>Agility:</strong> <?php echo $result['agility']; ?><br/>
+  <strong>Intelligence:</strong> <?php echo $result['intelligence']; ?><br/>
+  <strong>Willpower:</strong> <?php echo $result['willpower']; ?><br/>
+  <strong>Alertness:</strong> <?php echo $result['alertness']; ?>
+</p>
 <a href="/">Back</a>
-<p>Played by <?php echo $result['real_name'] ?></p>
-<h1>Location</h1>
+<h2>Biography</h2>
+<p><?php echo nl2br($result['bio']); ?></p>
+<h2>Past Events</h2>
+<p><?php echo nl2br($result['past']); ?></p>
+<h2>Future Goal</h2>
+<p><?php echo nl2br($result['goal']); ?></p>
+<h2>Location</h2>
 <p>Currently at <a href="/place.php?id=<?php echo $result['place_id']; ?>">
 <?php echo $result['place_name']; ?></a></p>
 <form action="/move_player.php?id=<?php echo $_GET['id']; ?>" method="POST">
@@ -43,14 +74,14 @@ if (!$result) die('No such player.');
   ?>
   </select> <input type="submit" /></p>
 </form>
-<h1>Journal Entries</h1>
+<h2>Journal Entries</h2>
 <?php
 $stmt = $db->prepare("SELECT * FROM journal WHERE player_id = :id ORDER BY created DESC");
 $stmt->bindValue(":id", $_GET['id']);
 $results = $stmt->execute();
 $count = 0;
 while ($row = $results->fetchArray()) {
-  echo '<h2>'.date(DATE_RFC822, $row['created']).'</h2>';
+  echo '<h3>'.date(DATE_RFC822, $row['created']).'</h3>';
   echo '<p>'.$row['content'].'</p>';
   $count++;
 }

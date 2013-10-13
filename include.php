@@ -1,5 +1,7 @@
 <?php
 
+include 'lib/player.php';
+
 if (!file_exists("db.sqlite3")) {
   $db = new SQLite3("db.sqlite3");
   $db->exec(file_get_contents("init.sql"));
@@ -39,7 +41,7 @@ function apply_patches($db, $current, $max) {
 }
 
 function list_ships($db, $where = "", $param = null) {
-  echo '<h1>Ships</h1>';
+  echo '<h2>Ships</h2>';
   $stmt = $db->prepare("
 SELECT
   ship.name as ship_name,
@@ -65,48 +67,6 @@ ORDER BY ship.name ASC");
     echo '</ul>';
   } else {
     echo 'There are no ships in this region.';
-  }
-}
-
-function list_players($db, $where = "", $param = null) {
-  echo '<h1>Players</h1>';
-  $stmt = $db->prepare("
-SELECT
-  party.name as party_name,
-  player.name as player_name,
-  place.name as place_name,
-  player.id as player_id,
-  place.id as place_id
-FROM party
-LEFT JOIN player ON player.party_id = party.id
-LEFT JOIN place ON player.place_id = place.id
-".$where."
-ORDER BY party.name ASC");
-  if ($param !== null) {
-    $stmt->bindValue(':param', $param);
-  }
-  $results = $stmt->execute();
-  $count = 0;
-  $pname = null;
-  while ($row = $results->fetchArray()) {
-    $count++;
-    if ($pname != $row["party_name"]) {
-      if ($pname != null) {
-        echo '</ul>';
-      }
-      $pname = $row["party_name"];
-      echo '<h2>'.$pname.'</h2><ul>';
-    }
-    echo '<li><a href="/player.php?id='.$row["player_id"].'">'.
-      $row["player_name"].'</a> (at '.
-      '<a href="/place.php?id='.$row["place_id"].'">'.$row["place_name"].'</a>)'.
-      '</li>';
-  }
-  if ($pname != null) {
-    echo '</ul>';
-  }
-  if ($count === 0) {
-    echo 'There are no players in this region.';
   }
 }
 

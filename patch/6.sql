@@ -1,0 +1,2 @@
+ALTER TABLE place
+ADD notes TEXT;

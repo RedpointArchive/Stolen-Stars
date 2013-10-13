@@ -1,8 +1,21 @@
 <?php
 include 'include.php';
+
+$stmt = $db->prepare("
+SELECT 
+  system.id,
+  system.name
+FROM system
+WHERE system.id = :id");
+$stmt->bindValue(':id', $_GET['id']);
+$results = $stmt->execute();
+$result = $results->fetchArray();
+if (!$result) die('No such system.');
+
 ?>
-<h1>Planets</h1>
+<h1><?php echo $result['name']; ?> System</h1>
 <a href="/">Back</a>
+<h2>Planets</h2>
 <ul>
 <?php
 $stmt = $db->prepare("SELECT * FROM planet WHERE system_id = :id");
