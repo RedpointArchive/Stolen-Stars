@@ -29,7 +29,7 @@ $results = $stmt->execute();
 $result = $results->fetchArray();
 if (!$result) die('No such player.');
 
-if ($_POST['submit']) {
+if (array_key_exists('submit', $_POST)) {
   $stmt = $db->prepare("
   UPDATE player
   SET
