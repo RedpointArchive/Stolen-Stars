@@ -30,5 +30,5 @@ VALUES
 );
 
 UPDATE player
-SET stats_id = last_insert_rowid()
+SET stats_id = ${lastinsert}
 WHERE name = 'Cody';

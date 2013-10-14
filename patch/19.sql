@@ -1,13 +1,13 @@
 CREATE TABLE skill
 (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY ${autoincrement},
   parent_id INTEGER,
   name TEXT
 );
 
 CREATE TABLE stats_skill
 (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY ${autoincrement},
   stats_id INTEGER,
   skill_id INTEGER,
   value INTEGER

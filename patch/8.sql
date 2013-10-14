@@ -1,6 +1,6 @@
 CREATE TABLE stats
 (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY ${autoincrement},
   role TEXT,
   plot_points INTEGER,
   wounds INTEGER,

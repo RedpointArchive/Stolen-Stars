@@ -42,9 +42,20 @@ function find_highest_patch() {
 }
 
 function apply_patches($db, $current, $max) {
+  $name = ss_pdo_name();
   for ($i = $current + 1; $i <= $max; $i++) {
-    $db->exec(file_get_contents("patch/$i.sql"));
-    echo "Applied SQL patch $i...<br />";
+    if (file_exists("patch/$i.sql")) {
+      $db->exec(
+        ss_pdo_transform(
+          file_get_contents("patch/$i.sql")));
+      echo "Applied SQL patch $i...<br />";
+    }
+    if (file_exists("patch/".$i."_".$name.".sql")) {
+      $db->exec(
+        ss_pdo_transform(
+          file_get_contents("patch/".$i."_".$name.".sql")));
+      echo "Applied SQL patch $i ($name)...<br />";
+    }
   }
 }
 

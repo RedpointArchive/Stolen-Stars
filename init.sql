@@ -1,48 +1,48 @@
 CREATE TABLE system
 (
-  id INTEGER PRIMARY KEY,
-  name VARCHAR
+  id INTEGER PRIMARY KEY ${autoincrement},
+  name TEXT
 );
 
 CREATE TABLE planet
 (
-  id INTEGER PRIMARY KEY,
-  name VARCHAR,
-  notes VARCHAR,
-  leadership VARCHAR,
+  id INTEGER PRIMARY KEY ${autoincrement},
+  name TEXT,
+  notes TEXT,
+  leadership TEXT,
   system_id INTEGER,
-  category INTEGER
+  category TEXT
 );
 
 CREATE TABLE place
 (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY ${autoincrement},
   planet_id INTEGER,
-  name VARCHAR
+  name TEXT
 );
 
 CREATE TABLE ship
 (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY ${autoincrement},
   place_id INTEGER,
   system_id INTEGER,
-  name VARCHAR
+  name TEXT
 );
 
 CREATE TABLE player
 (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY ${autoincrement},
   party_id INTEGER,
   place_id INTEGER,
-  name VARCHAR,
-  real_name VARCHAR
+  name TEXT,
+  real_name TEXT
 );
 
 CREATE TABLE party
 (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY ${autoincrement},
   ship_id INTEGER,
-  name VARCHAR
+  name TEXT
 );
 
 CREATE TABLE info

@@ -40,5 +40,5 @@ Somehow, she has been transported to a system that does not know the Emperor''s 
 );
 
 UPDATE player
-SET stats_id = last_insert_rowid()
+SET stats_id = ${lastinsert}
 WHERE name = 'Sabbatine Holtz';

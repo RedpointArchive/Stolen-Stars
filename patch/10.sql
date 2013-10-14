@@ -34,5 +34,5 @@ Now he hopes to get on with his life, using his skills as a Scout Sniper to earn
 );
 
 UPDATE player
-SET stats_id = last_insert_rowid()
+SET stats_id = ${lastinsert}
 WHERE name = 'Grayson Maines';
