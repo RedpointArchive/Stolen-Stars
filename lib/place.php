@@ -9,7 +9,7 @@ LEFT JOIN planet
 ORDER BY planet.name ASC;");
   $results = array();
   $pname = null;
-  while ($row = $places->fetchArray()) {
+  while ($row = $places->fetch()) {
     if (!array_key_exists($row["planet_name"], $results)) {
       $results[$row["planet_name"]] = array();
     }

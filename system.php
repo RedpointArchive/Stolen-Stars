@@ -9,8 +9,8 @@ SELECT
 FROM system
 WHERE system.id = :id");
 $stmt->bindValue(':id', $_GET['id']);
-$results = $stmt->execute();
-$result = $results->fetchArray();
+$stmt->execute();
+$result = $stmt->fetch();
 if (!$result) die('No such system.');
 
 ?>
@@ -22,8 +22,8 @@ if (!$result) die('No such system.');
 <?php
 $stmt = $db->prepare("SELECT * FROM planet WHERE system_id = :id");
 $stmt->bindValue(':id', $_GET['id']);
-$results = $stmt->execute();
-while ($row = $results->fetchArray()) {
+$stmt->execute();
+while ($row = $stmt->fetch()) {
 ?>
 <li>
   <a href="/planet.php?id=<?php echo $row['id']; ?>">

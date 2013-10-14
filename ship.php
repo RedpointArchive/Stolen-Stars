@@ -18,8 +18,8 @@ LEFT JOIN planet ON planet.id = place.planet_id
 LEFT JOIN system ON system.id = ship.system_id
 WHERE ship.id = :id");
 $stmt->bindValue(':id', $_GET['id']);
-$results = $stmt->execute();
-$result = $results->fetchArray();
+$stmt->execute();
+$result = $stmt->fetch();
 if (!$result) die('No such ship.');
 
 ?>

@@ -12,8 +12,8 @@ FROM player
 LEFT JOIN place ON place.id = player.place_id
 WHERE player.id = :id");
 $stmt->bindValue(':id', $_GET['id']);
-$results = $stmt->execute();
-$result = $results->fetchArray();
+$stmt->execute();
+$result = $stmt->fetch();
 if (!$result) die('No such player.');
 
 if (array_key_exists('submit', $_POST)) {

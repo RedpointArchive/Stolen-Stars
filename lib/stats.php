@@ -6,8 +6,8 @@ SELECT id
 FROM player
 WHERE stats_id = :id");
   $stmt->bindValue(":id", $stats_id);
-  $results = $stmt->execute();
-  $result = $results->fetchArray();
+  $stmt->execute();
+  $result = $stmt->fetch();
   if ($result) return '/player.php?id='.$result["id"];
   return null;
 }
@@ -18,8 +18,8 @@ SELECT id, name
 FROM player
 WHERE stats_id = :id");
   $stmt->bindValue(":id", $stats_id);
-  $results = $stmt->execute();
-  $result = $results->fetchArray();
+  $stmt->execute();
+  $result = $stmt->fetch();
   if ($result) return $result["name"];
   return null;
 }

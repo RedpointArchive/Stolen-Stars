@@ -13,9 +13,9 @@ LEFT JOIN skill
 WHERE stats_skill.stats_id = :id
 ORDER BY skill.name ASC");
   $stmt->bindValue(':id', $stats_id);
-  $results = $stmt->execute();
+  $stmt->execute();
   $skills = array();
-  while ($row = $results->fetchArray()) {
+  while ($row = $stmt->fetch()) {
     $skills[] = $row;
   }
   

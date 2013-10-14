@@ -5,7 +5,7 @@ include 'include.php';
 <ul>
 <?php
 $results = $db->query("SELECT * FROM system");
-while ($row = $results->fetchArray()) {
+while ($row = $results->fetch()) {
 ?>
 <li>
   <a href="/system.php?id=<?php echo $row['id']; ?>">

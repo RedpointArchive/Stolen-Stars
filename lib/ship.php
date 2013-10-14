@@ -8,13 +8,13 @@ SELECT
   ship.id as ship_id
 FROM ship
 ".$where."
-ORDER BY ship.name ASC");
+ORDER BY ship.name ASC;");
   if ($param !== null) {
     $stmt->bindValue(':param', $param);
   }
-  $results = $stmt->execute();
+  $stmt->execute();
   $output = false;
-  while ($row = $results->fetchArray()) {
+  while ($row = $stmt->fetch()) {
     if (!$output) {
       echo '<ul>';
       $output = true;

@@ -12,8 +12,8 @@ FROM planet
 LEFT JOIN system ON system.id = planet.system_id
 WHERE planet.id = :id");
 $stmt->bindValue(':id', $planet_id);
-$results = $stmt->execute();
-$result = $results->fetchArray();
+$stmt->execute();
+$result = $stmt->fetch();
 if (!$result) die('No such planet.');
 
 $planet_name = $result["name"];
@@ -26,8 +26,8 @@ SELECT
 FROM ship
 WHERE ship.id = :id");
 $stmt->bindValue(':id', $ship_id);
-$results = $stmt->execute();
-$result = $results->fetchArray();
+$stmt->execute();
+$result = $stmt->fetch();
 if (!$result) die('No such ship.');
 
 $ship_name = $result["name"];

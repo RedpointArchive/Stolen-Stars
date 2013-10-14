@@ -9,7 +9,7 @@ LEFT JOIN system
 ORDER BY system.name ASC;");
   $results = array();
   $pname = null;
-  while ($row = $places->fetchArray()) {
+  while ($row = $places->fetch()) {
     if (!array_key_exists($row["system_name"], $results)) {
       $results[$row["system_name"]] = array();
     }

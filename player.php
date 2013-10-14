@@ -25,8 +25,8 @@ LEFT JOIN stats ON player.stats_id = stats.id
 LEFT JOIN place ON place.id = player.place_id
 WHERE player.id = :id");
 $stmt->bindValue(':id', $_GET['id']);
-$results = $stmt->execute();
-$result = $results->fetchArray();
+$stmt->execute();
+$result = $stmt->fetch();
 if (!$result) die('No such player.');
 ?>
 <h1><?php echo $result['name'] ?> (played by <?php echo $result['real_name'] ?>)</h1>
@@ -86,9 +86,9 @@ if (!$result) die('No such player.');
 <?php
 $stmt = $db->prepare("SELECT * FROM journal WHERE player_id = :id ORDER BY created DESC");
 $stmt->bindValue(":id", $_GET['id']);
-$results = $stmt->execute();
+$stmt->execute();
 $count = 0;
-while ($row = $results->fetchArray()) {
+while ($row = $stmt->fetch()) {
   echo '<h3>'.date(DATE_RFC822, $row['created']).'</h3>';
   echo '<p>'.$row['content'].'</p>';
   $count++;

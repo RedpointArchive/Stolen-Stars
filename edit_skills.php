@@ -16,9 +16,9 @@ ORDER BY
     else parent_skill.name || ' -> ' || skill.name
   end
 ) ASC");
-$results = $stmt->execute();
+$stmt->execute();
 $all_skills = array();
-while ($row = $results->fetchArray()) {
+while ($row = $stmt->fetch()) {
   $all_skills[] = $row;
 }
 
@@ -43,9 +43,9 @@ ORDER BY
   end
 ) ASC");
 $stmt->bindValue(':id', $_GET['id']);
-$results = $stmt->execute();
+$stmt->execute();
 $skills = array();
-while ($row = $results->fetchArray()) {
+while ($row = $stmt->fetch()) {
   $skills[] = $row;
 }
 

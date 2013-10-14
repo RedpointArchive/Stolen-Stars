@@ -14,8 +14,8 @@ FROM place
 LEFT JOIN ship ON ship.place_id = place.id
 WHERE place.id = :id");
 $stmt->bindValue(':id', $_GET['id']);
-$results = $stmt->execute();
-$result = $results->fetchArray();
+$stmt->execute();
+$result = $stmt->fetch();
 if (!$result) die('No such place.');
 
 ?>

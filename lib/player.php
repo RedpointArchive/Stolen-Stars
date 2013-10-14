@@ -25,10 +25,10 @@ ORDER BY party.name ASC, player.name ASC");
   if ($param !== null) {
     $stmt->bindValue(':param', $param);
   }
-  $results = $stmt->execute();
+  $stmt->execute();
   $count = 0;
   $pname = null;
-  while ($row = $results->fetchArray()) {
+  while ($row = $stmt->fetch()) {
     $count++;
     if ($pname != $row["party_name"]) {
       if ($pname != null) {

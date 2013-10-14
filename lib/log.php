@@ -15,13 +15,13 @@ function print_log($db) {
   $stmt = $db->prepare("
 SELECT created, content FROM log
 ORDER BY created DESC");
-  $results = $stmt->execute();
+  $stmt->execute();
   echo '<table style="width: 100%;">
   <tr>
     <th style="text-align: left; width: 300px;">Date</th>
     <th style="text-align: left;">Message</th>
   </tr>';
-  while ($row = $results->fetchArray()) {
+  while ($row = $stmt->fetch()) {
     echo '<tr>
     <td>'.date(DATE_RFC822, $row['created']).'</td>
     <td>'.$row["content"].'</td>

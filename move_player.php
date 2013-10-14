@@ -13,8 +13,8 @@ FROM player
 LEFT JOIN place ON place.id = player.place_id
 WHERE player.id = :id");
 $stmt->bindValue(':id', $player_id);
-$results = $stmt->execute();
-$result = $results->fetchArray();
+$stmt->execute();
+$result = $stmt->fetch();
 if (!$result) die('No such player.');
 
 $player_name = $result["name"];
@@ -31,8 +31,8 @@ $stmt = $db->prepare("
 SELECT name FROM place
 WHERE id = :id");
 $stmt->bindValue(':id', $place_id);
-$results = $stmt->execute();
-$result = $results->fetchArray();
+$stmt->execute();
+$result = $stmt->fetch();
 if (!$result) die('No such place.');
 
 $new_place = $result["name"];
