@@ -37,16 +37,18 @@ if (array_key_exists('submit', $_POST)) {
       $item->setValue($_POST['invvalue'.$id]);
       $item->save();
     }
-    if ($key == 'newtype') {
+    if (substr($key, 0, 7) == 'newtype') {
+      $id = (int)substr($key, 7);
+      
       $item = new ItemInstance($db, -1);
       $item->setInventory($inv);
-      $item->setItem(new Item($db, $_POST['newtype']));
-      if (!array_key_exists('newquantity', $_POST)) {
+      $item->setItem(new Item($db, $_POST['newtype'.$id]));
+      if (!array_key_exists('newquantity'.$id, $_POST)) {
         $item->setQuantity(1);
       } else {
-        $item->setQuantity($_POST['newquantity']);
+        $item->setQuantity($_POST['newquantity'.$id]);
       }
-      $item->setValue($_POST['newvalue']);
+      $item->setValue($_POST['newvalue'.$id]);
       $item->save();
     }
   }
@@ -59,7 +61,7 @@ if (array_key_exists('submit', $_POST)) {
 ?>
 <h1>Edit <?php echo find_inventory_related_name($db, $get_id); ?>'s Inventory</h1>
 <a href="<?php echo find_inventory_related_url($db, $get_id); ?>">Back / Cancel Changes</a>
-<form action="/edit_player_inventory.php?id=<?php echo $get_id; ?>" method="post">
+<form action="/edit_inventory.php?<?php echo $_SERVER['QUERY_STRING']; ?>" method="post">
 <h2>Inventory</h2>
 <table>
   <tr>
@@ -102,23 +104,25 @@ if (array_key_exists('submit', $_POST)) {
   </tr>
 <?php
   }
+  for ($i = 0; $i < 10; $i++) {
 ?>
   <tr>
     <td>
       <input
         type="number"
-        name="newquantity"
-        value="1" />
+        name="newquantity<?php echo $i; ?>"
+        value="" />
     </td>
-    <td><select name="newtype" style="width: 200px;"><option value="-1">(nothing)</option><?php
+    <td><select name="newtype<?php echo $i; ?>" style="width: 200px;"><option value="-1">(nothing)</option><?php
     foreach ($all_items as $item) {
       echo '<option value="'.$item->getID().'">'.$item->getName().'</option>';
     }
 ?></td>
     <td>
-      <input type="text" name="newvalue" value="" />
+      <input type="text" name="newvalue<?php echo $i; ?>" value="" />
     </td>
   </tr>
+<?php } ?>
 </table>
 <br/>
 <input type="submit" name="submit" value="Save All Changes!" />

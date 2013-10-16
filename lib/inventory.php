@@ -296,7 +296,7 @@ WHERE b.inventory_id = :old_id");
       echo $iteminst->getItem()->getName();
       $notes = $iteminst->getValue();
       if (trim($notes) != "") {
-        echo ' <em>"'.$notes.'"</em>';
+        echo ' - <em>'.$notes.'</em>';
       }
       echo '</li>';
     }

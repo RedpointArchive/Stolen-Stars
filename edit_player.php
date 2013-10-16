@@ -157,7 +157,7 @@ if (array_key_exists('submit', $_POST)) {
 <textarea name="goal" style="width: 80%;" rows="20">
 <?php echo $result['goal']; ?>
 </textarea>
-<h2>Inventory</h2>
+<h2>Additional Inventory</h2>
 <textarea name="inventory" style="width: 80%;" rows="20">
 <?php echo $result['inventory']; ?>
 </textarea>
