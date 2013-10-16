@@ -1,6 +1,6 @@
 <?php
 
-function find_related_url($db, $stats_id) {
+function find_skill_related_url($db, $stats_id) {
   $stmt = $db->prepare("
 SELECT id
 FROM player
@@ -12,7 +12,7 @@ WHERE stats_id = :id");
   return null;
 }
 
-function find_related_name($db, $stats_id) {
+function find_skill_related_name($db, $stats_id) {
   $stmt = $db->prepare("
 SELECT id, name
 FROM player

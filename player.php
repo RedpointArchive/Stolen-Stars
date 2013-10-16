@@ -81,6 +81,11 @@ if (!$result) die('No such player.');
   </select> <input type="submit" /></p>
 </form>
 <h2>Inventory</h2>
+<?php
+$inv = Inventory::loadFromPlayer($db, $_GET['id']);
+$inv->render();
+?>
+<a href="/edit_inventory.php?player_id=<?php echo $_GET['id']; ?>">Edit</a>
 <p><?php echo nl2br($result['inventory']); ?></p>
 <h2>Journal Entries</h2>
 <?php

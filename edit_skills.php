@@ -91,15 +91,15 @@ VALUES
       $stmt->execute();
     }
   }
-  create_log($db, "The skills of ".find_related_name($db, $_GET['id'])." were edited");
+  create_log($db, "The skills of ".find_skill_related_name($db, $_GET['id'])." were edited");
   
-  header('Location: '.find_related_url($db, $_GET['id']));
+  header('Location: '.find_skill_related_url($db, $_GET['id']));
   die();
 }
 
 ?>
 <h1>Edit Skills</h1>
-<a href="<?php echo find_related_url($db, $_GET['id']); ?>">Back / Cancel Changes</a>
+<a href="<?php echo find_skill_related_url($db, $_GET['id']); ?>">Back / Cancel Changes</a>
 <form action="/edit_skills.php?id=<?php echo $_GET['id']; ?>" method="post">
 <h2>Skills</h2>
 <table>
