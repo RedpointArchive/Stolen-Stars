@@ -1,0 +1,3 @@
+#!/bin/bash
+
+kate $(find ./ -name \*.php -or -name \*.sql)

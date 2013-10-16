@@ -10,6 +10,7 @@ include 'lib/place.php';
 include 'lib/ship.php';
 include 'lib/skill.php';
 include 'lib/stats.php';
+include 'lib/inventory.php';
 
 $db = ss_pdo_connect();
 
