@@ -3,6 +3,7 @@
 date_default_timezone_set("Australia/Melbourne");
 
 include 'config.php';
+include 'dba/dao.php';
 include 'lib/log.php';
 include 'lib/player.php';
 include 'lib/planet.php';
