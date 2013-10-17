@@ -101,7 +101,6 @@ abstract class DAO {
     $sql .= " FROM ";
     $sql .= $this->getTableName()." AS a";
     $sql .= " WHERE id = :id";
-    trigger_error("load - ".$sql);
     $stmt = $this->db->prepare($sql);
     $stmt->bindValue(":id", $id);
     $stmt->execute();
@@ -121,7 +120,6 @@ abstract class DAO {
     $sql .= implode(",", $columns);
     $sql .= " FROM ";
     $sql .= $this->getTableName()." AS a";
-    trigger_error("loadall - ".$sql);
     $stmt = $this->db->prepare($sql);
     $stmt->execute();
     $class = get_class($this);
@@ -172,7 +170,6 @@ abstract class DAO {
       $sql .= implode(", ", $assignments);
       $sql .= " WHERE id = :id;";
     }
-    trigger_error("save - ".$sql);
     
     $stmt = $this->db->prepare($sql);
     foreach ($this->getProperties() as $key => $value) {
