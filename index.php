@@ -1,22 +1,27 @@
 <?php
+$allow_anonymous = true;
+
+// TODO: Finish authorization logic.
+header('Location: /overview.php');
+die();
+
 include 'include.php';
 ?>
-<h1>Systems</h1>
-<ul>
-<?php
-$results = $db->query("SELECT * FROM system");
-while ($row = $results->fetch()) {
-?>
-<li>
-  <a href="/system.php?id=<?php echo $row['id']; ?>">
-    <?php echo $row["name"]; ?>
-  </a>
-</li>
-<?php
-}
-?>
-</ul>
-<?php list_ships($db); ?>
-<?php list_players($db); ?>
-<h2>Log</h2>
-<?php print_log($db); ?>
+<h1 style="text-align: center;">Stolen Stars</h1>
+<p>Stolen Stars is an online role playing system.  It is currently in private alpha.</p>
+<p>Login if you have an account:</p>
+<form action="/" method="post">
+<table>
+  <tr>
+    <td>Username:</td>
+    <td><input name="username" type="text" /></td>
+  </tr>
+  <tr>
+    <td>Password:</td>
+    <td><input name="password" type="password" /></td>
+  </tr>
+  <tr>
+    <td colspan="2"><input type="submit" name="submit" value="Login" /></td>
+  </tr>
+</table>
+</form>

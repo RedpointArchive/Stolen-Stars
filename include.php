@@ -14,6 +14,7 @@ include 'lib/skill.php';
 include 'lib/stats.php';
 include 'lib/inventory.php';
 include 'lib/system.php';
+include 'lib/auth.php';
 
 $db = ss_pdo_connect();
 
@@ -29,6 +30,19 @@ if ($version < $max) {
   $stmt = $db->prepare("UPDATE info SET version = :new");
   $stmt->bindValue(":new", $max);
   $stmt->execute();
+}
+
+// TODO: Finish authorization logic.
+$allow_anonymous = true;
+
+$auth = new Auth($db);
+if (!isset($allow_anonymous) || !$allow_anonymous) {
+  $auth->authorize();
+}
+
+if (isset($_SESSION['error'])) {
+  echo '<p style="color: red;">'.$_SESSION['error'].'</p>';
+  unset($_SESSION['error']);
 }
 
 function find_highest_patch() {
