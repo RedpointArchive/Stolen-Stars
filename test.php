@@ -10,6 +10,22 @@ class Player extends DAO {
   protected $inventory_id;
 }
 
+class Stats extends DAO {
+  protected $role;
+  protected $plot_points;
+  protected $wounds;
+  protected $stun;
+  protected $strength;
+  protected $agility;
+  protected $intelligence;
+  protected $willpower;
+  protected $alertness;
+  protected $past;
+  protected $goal;
+  protected $bio;
+  protected $inventory;
+}
+
 // ====== Test Load ======
 
 echo "====== Test Load ======<br/>";
@@ -74,4 +90,19 @@ echo "====== Test Load All ======<br/>";
 $players = new Player($db);
 foreach ($players->loadAll() as $player) {
   echo $player->getID() . " -> " . $player->getName() . "<br/>";
+}
+
+// ====== Test Implicit Load ======
+
+echo "====== Test Implicit Load ======<br/>";
+
+$player = new Player($db);
+$player->load(1);
+
+$stats = $player->getStats();
+if ($stats === null) {
+  echo "stats is null<br/>";
+} else {
+  echo "stats ID is ".$stats->getID()."<br/>";
+  echo nl2br($stats->getPast());
 }

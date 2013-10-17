@@ -51,8 +51,23 @@ abstract class DAO {
     return $properties;
   }
   
+  protected function attemptImplicitLoad($name) {
+    $properties = $this->getProperties();
+    $field = $name."_id";
+    if ($this->$field === null) {
+      return null;
+    }
+    $obj = new $name($this->db);
+    $obj->load($this->$field);
+    return $obj;
+  }
+  
   protected function readField($name) {
     $properties = $this->getProperties();
+    if (!array_key_exists($name, $properties) &&
+        array_key_exists($name."id", $properties)) {
+      return $this->attemptImplicitLoad($name);
+    }
     $field = $properties[$name];
     return $this->$field;
   }
