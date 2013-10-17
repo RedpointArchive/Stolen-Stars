@@ -22,6 +22,7 @@ if (array_key_exists('r', $_GET)) {
 switch ($_GET['class']) {
   case "planet":
     $crud->setEditor("name", CRUD::EDITOR_TEXT);
+    $crud->setEditor("system_id", CRUD::EDITOR_LOOKUP);
     $crud->setEditor("notes", CRUD::EDITOR_DESCRIPTION);
     $crud->setEditor("leadership", CRUD::EDITOR_TEXT);
     $crud->setEditor("category", CRUD::EDITOR_TEXT);
