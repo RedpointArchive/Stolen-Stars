@@ -34,7 +34,7 @@ abstract class DAO {
     return $name;
   }
   
-  protected function getProperties() {
+  public function getProperties() {
     static $properties = null;
     if (!isset($properties)) {
       $class = new ReflectionClass(get_class($this));

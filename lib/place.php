@@ -1,5 +1,11 @@
 <?php
 
+class Place extends DAO {
+  protected $planet_id;
+  protected $name;
+  protected $notes;
+}
+
 function get_grouped_places($db) {
   $places = $db->query("
 SELECT place.id, place.name, planet.name AS planet_name

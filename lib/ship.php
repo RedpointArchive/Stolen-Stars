@@ -1,5 +1,11 @@
 <?php
 
+class Ship extends DAO {
+  protected $place_id;
+  protected $system_id;
+  protected $name;
+}
+
 function list_ships($db, $where = "", $param = null) {
   echo '<h2>Ships</h2>';
   $stmt = $db->prepare("

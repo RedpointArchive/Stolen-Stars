@@ -4,6 +4,7 @@ date_default_timezone_set("Australia/Melbourne");
 
 include 'config.php';
 include 'dba/dao.php';
+include 'dba/crud.php';
 include 'lib/log.php';
 include 'lib/player.php';
 include 'lib/planet.php';
@@ -12,6 +13,7 @@ include 'lib/ship.php';
 include 'lib/skill.php';
 include 'lib/stats.php';
 include 'lib/inventory.php';
+include 'lib/system.php';
 
 $db = ss_pdo_connect();
 

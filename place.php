@@ -38,6 +38,7 @@ if ($result['planet_id'] !== null) {
 <a href="/system.php?id=<?php echo $result['system_id']; ?>">Back</a>
 <?php
 }
-?>
+?> &bull; 
+<?php CRUD::renderEditLink("place", $result['id']); ?>
 <?php list_players($db, "
 WHERE player.place_id = :param", $_GET['id']); ?>

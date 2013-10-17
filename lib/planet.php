@@ -1,5 +1,13 @@
 <?php
 
+class Planet extends DAO {
+  protected $name;
+  protected $notes;
+  protected $leadership;
+  protected $system_id;
+  protected $category;
+}
+
 function get_grouped_planets($db) {
   $places = $db->query("
 SELECT planet.id, planet.name, system.name AS system_name

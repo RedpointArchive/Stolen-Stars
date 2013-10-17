@@ -17,7 +17,8 @@ if (!$result) die('No such planet.');
 ?>
 <h1><?php echo $result['name']; ?></h1>
 <p><?php echo nl2br($result['notes']); ?></p>
-<a href="/system.php?id=<?php echo $result['system_id']; ?>">Back</a>
+<a href="/system.php?id=<?php echo $result['system_id']; ?>">Back</a> &bull; 
+<?php CRUD::renderEditLink("planet", $result['id']); ?>
 <h2>Places</h2>
 <ul>
 <?php
