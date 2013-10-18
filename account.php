@@ -3,6 +3,23 @@ require 'include.php';
 
 if (isset($_GET['mode'])) {
   switch ($_GET['mode']) {
+    case 'username':
+      if ($_POST['username'] != $auth->getUser()->getUsername()) {
+        $user = new User($db);
+        $existing = $user->loadAllWhere(
+          'username = :username',
+          array(":username" => $_POST['username']));
+        if (count($existing) != 0) {
+          $_SESSION['error'] = 'That username is already taken!';
+        } else {
+          $auth->getUser()->setUsername($_POST['username']);
+          $auth->getUser()->save();
+          $_SESSION['success'] = 'Your username has been changed.';
+        }
+      }
+      header('Location: /account.php');
+      die();
+      break;
     case 'email':
       $auth->getUser()->setEmail($_POST['email']);
       $auth->getUser()->save();
@@ -31,6 +48,24 @@ if (isset($_GET['mode'])) {
 ?>
 <h1>Your Account</h1>
 <a href="/">Back</a>
+<h2>Change Username</h2>
+<form action="/account.php?mode=username" method="POST">
+  <table>
+    <tr>
+      <td>Current Username:</td>
+      <td><?php echo $auth->getUser()->getUsername(); ?></td>
+    </tr>
+    <tr>
+      <td>New Username:</td>
+      <td><input type="text" name="username" /></td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <input type="submit" name="submit" value="Submit" />
+      </td>
+    </tr>
+  </table>
+</form>
 <h2>Change Email</h2>
 <form action="/account.php?mode=email" method="POST">
   <table>
