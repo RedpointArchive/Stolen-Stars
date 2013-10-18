@@ -105,7 +105,7 @@ if (!$auth->isAnonymous()) {
   text-align: right;">
 <?php echo $auth->getUser()->getUsername(); ?> &bull;
 <?php if ($auth->getUser()->getIsAdministrator()) { ?>
-<a href="/admin">Admin</a> &bull;
+<a href="/admin/">Admin</a> &bull;
 <?php } ?>
 <a href="/account.php">Account</a> &bull;
 <a href="/logout.php">Logout</a>
