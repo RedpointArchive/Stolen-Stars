@@ -6,7 +6,7 @@ $users = $user->loadAll();
 
 ?>
 <h1>Manage Users</h1>
-<a href="/admin">Back</a>
+<a href="/admin/">Back</a>
 <h2>User List</h2>
 <table>
   <tr>
