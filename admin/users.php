@@ -27,6 +27,6 @@ foreach ($users as $user) {
 ?>
 </table>
 <br />
-<form action="/admin/users.php?mode=new" method="post">
+<form action="/admin/edit_user.php?id=-1&amp;r=<?php echo urlencode($_SERVER['REQUEST_URI']); ?>" method="post">
   <input type="submit" name="submit" value="Create User" />
 </form>
