@@ -1,5 +1,5 @@
 <?php
-include 'include.php';
+require 'include.php';
 
 class Player extends DAO {
   protected $party_id;

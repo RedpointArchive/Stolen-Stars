@@ -1,5 +1,5 @@
 <?php
-include 'include.php';
+require 'include.php';
 
 $place_id = $_POST['target'];
 $player_id = $_GET['id'];

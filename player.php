@@ -1,5 +1,5 @@
 <?php
-include 'include.php';
+require 'include.php';
 $stmt = $db->prepare("
 SELECT 
   player.id,

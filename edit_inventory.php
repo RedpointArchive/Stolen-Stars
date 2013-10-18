@@ -1,5 +1,5 @@
 <?php
-include 'include.php';
+require 'include.php';
 
 if ($_GET['player_id'] != null) {
   $get_id = $_GET['player_id'];

@@ -2,19 +2,21 @@
 
 date_default_timezone_set("Australia/Melbourne");
 
-include 'config.php';
-include 'dba/dao.php';
-include 'dba/crud.php';
-include 'lib/log.php';
-include 'lib/player.php';
-include 'lib/planet.php';
-include 'lib/place.php';
-include 'lib/ship.php';
-include 'lib/skill.php';
-include 'lib/stats.php';
-include 'lib/inventory.php';
-include 'lib/system.php';
-include 'lib/auth.php';
+chdir(realpath(dirname(__FILE__)));
+
+require 'config.php';
+require 'dba/dao.php';
+require 'dba/crud.php';
+require 'lib/log.php';
+require 'lib/player.php';
+require 'lib/planet.php';
+require 'lib/place.php';
+require 'lib/ship.php';
+require 'lib/skill.php';
+require 'lib/stats.php';
+require 'lib/inventory.php';
+require 'lib/system.php';
+require 'lib/auth.php';
 
 $db = ss_pdo_connect();
 
@@ -32,17 +34,32 @@ if ($version < $max) {
   $stmt->execute();
 }
 
-// TODO: Finish authorization logic.
-$allow_anonymous = true;
-
 $auth = new Auth($db);
-if (!isset($allow_anonymous) || !$allow_anonymous) {
-  $auth->authorize();
+$auth_result = $auth->authorize();
+if ($auth_result != Auth::SUCCESS) {
+  if (!isset($allow_anonymous) || !$allow_anonymous) {
+    $auth->handleFailure($auth_result);
+  }
+}
+
+// If the path starts with /admin/, then the user must be
+// an administrator to access the page.
+if (substr($_SERVER['REQUEST_URI'], 0, 7) == '/admin/' ||
+  $_SERVER['REQUEST_URI'] == '/admin') {
+  if (!$auth->getUser()->getIsAdministrator()) {
+    $_SESSION['error'] = "You don't have permission to access this page.";
+    header('Location: /overview.php');
+    die();
+  }
 }
 
 if (isset($_SESSION['error'])) {
   echo '<p style="color: red;">'.$_SESSION['error'].'</p>';
   unset($_SESSION['error']);
+}
+if (isset($_SESSION['success'])) {
+  echo '<p style="color: green;">'.$_SESSION['success'].'</p>';
+  unset($_SESSION['success']);
 }
 
 function find_highest_patch() {
@@ -77,4 +94,22 @@ function apply_patches($db, $current, $max) {
   }
 }
 
+// Output the user information in the top-right.
+if (!$auth->isAnonymous()) {
+?>
+<div style="
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  height: 50px;
+  text-align: right;">
+<?php echo $auth->getUser()->getUsername(); ?> &bull;
+<?php if ($auth->getUser()->getIsAdministrator()) { ?>
+<a href="/admin">Admin</a> &bull;
+<?php } ?>
+<a href="/account.php">Account</a> &bull;
+<a href="/logout.php">Logout</a>
+</div>
+<?php
+}
 ?>

@@ -1,7 +1,7 @@
 <?php
 
-include 'dba/sqlite.php';
-include 'dba/mysql.php';
+require 'dba/sqlite.php';
+require 'dba/mysql.php';
 
 // Configure Stolen Stars to use either SQLite or MySQL.
 function ss_pdo_connect() {

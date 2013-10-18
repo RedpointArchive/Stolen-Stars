@@ -1,5 +1,5 @@
 <?php
-include 'include.php';
+require 'include.php';
 ?>
 <h1>Systems</h1>
 <ul>

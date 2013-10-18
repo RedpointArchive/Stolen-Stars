@@ -1,11 +1,23 @@
 <?php
 $allow_anonymous = true;
 
-// TODO: Finish authorization logic.
-header('Location: /overview.php');
-die();
+require 'include.php';
 
-include 'include.php';
+if (!$auth->isAnonymous()) {
+  header('Location: /overview.php');
+  die();
+}
+
+if (isset($_POST['submit'])) {
+  $username = $_POST['username'];
+  $password = $_POST['password'];
+  
+  if ($auth->attemptLogin($username, $password)) {
+    header('Location: /overview.php');
+    die();
+  }
+}
+
 ?>
 <h1 style="text-align: center;">Stolen Stars</h1>
 <p>Stolen Stars is an online role playing system.  It is currently in private alpha.</p>

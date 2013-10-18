@@ -111,6 +111,57 @@ abstract class DAO {
     return $this;
   }
   
+  public function loadOneWhere($condition, $mappings) {
+    $sql = "SELECT ";
+    $columns = array();
+    foreach ($this->getProperties() as $key => $value) {
+      $columns[] = "a.$value";
+    }
+    $sql .= implode(",", $columns);
+    $sql .= " FROM ";
+    $sql .= $this->getTableName()." AS a";
+    $sql .= " WHERE ";
+    $sql .= $condition;
+    $stmt = $this->db->prepare($sql);
+    foreach ($mappings as $binding => $value) {
+      $stmt->bindValue($binding, $value);
+    }
+    $stmt->execute();
+    $result = $stmt->fetch();
+    foreach ($this->getProperties() as $key => $value) {
+      $this->writeField($key, $result[$value]);
+    }
+    return $this;
+  }
+  
+  public function loadAllWhere($condition, $mappings) {
+    $sql = "SELECT ";
+    $columns = array();
+    foreach ($this->getProperties() as $key => $value) {
+      $columns[] = "a.$value";
+    }
+    $sql .= implode(",", $columns);
+    $sql .= " FROM ";
+    $sql .= $this->getTableName()." AS a";
+    $sql .= " WHERE ";
+    $sql .= $condition;
+    $stmt = $this->db->prepare($sql);
+    foreach ($mappings as $binding => $value) {
+      $stmt->bindValue($binding, $value);
+    }
+    $stmt->execute();
+    $class = get_class($this);
+    $results = array();
+    while ($row = $stmt->fetch()) {
+      $result = new $class($this->db);
+      foreach ($this->getProperties() as $key => $value) {
+        $result->writeField($key, $row[$value]);
+      }
+      $results[] = $result;
+    }
+    return $results;
+  }
+  
   public function loadAll() {
     $sql = "SELECT ";
     $columns = array();
@@ -181,6 +232,22 @@ abstract class DAO {
     
     if ($this->id === -1) {
       $this->id = $this->db->lastInsertID();
+    }
+  }
+  
+  public function delete() {
+    $sql = "";
+    if ($this->id === -1) {
+      throw new Exception(
+        "Can't delete an object that doesn't exist in the DB");
+    } else {
+      $sql .= "DELETE FROM ";
+      $sql .= $this->getTableName();
+      $sql .= " WHERE id = :id;";
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindValue(":id", $this->getID());
+      $stmt->execute();
+      $this->id = -1;
     }
   }
 }

@@ -5,6 +5,8 @@ final class CRUD {
   const EDITOR_TEXT = "text";
   const EDITOR_NUMBER = "number";
   const EDITOR_LOOKUP = "lookup";
+  const EDITOR_BOOLEAN = "boolean";
+  const EDITOR_PASSWORD = "password";
   const EDITOR_DESCRIPTION = "description";
    
   private $db;
@@ -24,8 +26,11 @@ final class CRUD {
 
   public function __construct($db, $class, $id) {
     $this->db = $db;
+    $this->id = $id;
     $this->obj = new $class($db);
-    $this->obj->load($id);
+    if ($this->id != -1) {
+      $this->obj->load($this->id);
+    }
     $this->class_name = $class;
     $this->editors = array();
   }
@@ -65,6 +70,16 @@ final class CRUD {
       case self::EDITOR_NUMBER:
         echo '<input type="number" name="'.$name.'" value="'.$value.'" />';
         break;
+      case self::EDITOR_PASSWORD:
+        echo '<input type="password" name="'.$name.'" value="" placeholder="Leave blank to not change" />';
+        break;
+      case self::EDITOR_BOOLEAN:
+        if ($value) {
+          echo '<input type="checkbox" name="'.$name.'" value="true" checked="checked" />';
+        } else {
+          echo '<input type="checkbox" name="'.$name.'" value="true" />';
+        }
+        break;
       case self::EDITOR_LOOKUP:
         // Determine what objects to lookup based on the name.
         $class_name = str_replace("_", "", substr($name, 0, strlen($name) - 2));
@@ -92,11 +107,31 @@ final class CRUD {
   public function handleSave() {
     // Find all appropriate $_POST entries.
     foreach ($_POST as $key => $value) {
-      if (in_array($key, $this->obj->getProperties())) {
-        $set_method = "set".str_replace("_", "", $key);
-        $this->obj->$set_method($value);
+      if (isset($this->editors[$key])) {
+        if ($this->editors[$key] == self::EDITOR_PASSWORD) {
+          if (empty($value)) {
+            // If the password fields is left blank, we don't
+            // set it at all.
+            continue;
+          }
+        }
+        if (in_array($key, $this->obj->getProperties())) {
+          $set_method = "set".str_replace("_", "", $key);
+          $this->obj->$set_method($value);
+        }
       }
     }
+    
+    // Search all editors because EDITOR_BOOLEAN is not
+    // present when unchecked.
+    foreach ($this->editors as $name => $editor) {
+      if ($editor == self::EDITOR_BOOLEAN) {
+        $set_method = "set".str_replace("_", "", $name);
+        $this->obj->$set_method(isset($_POST[$name]));
+      }
+    }
+    
+    // Save the object.
     $this->obj->save();
     
     if ($this->getLogSource() !== null) {
@@ -118,7 +153,13 @@ final class CRUD {
       $this->handleSave();
       return;
     }
-    echo '<h1>Edit '.ucwords($this->class_name).'</h1>';
+    echo '<h1>';
+    if ($this->id == -1) {
+      echo 'New';
+    } else {
+      echo 'Edit';
+    }
+    echo ' '.ucwords($this->class_name).'</h1>';
     if ($this->getReturnURL() !== null) {
       echo '<a href="'.$this->getReturnURL().'">Back / Cancel Changes</a>';
     }
