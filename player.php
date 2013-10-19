@@ -100,7 +100,7 @@ while ($row = $stmt->fetch()) {
   echo '<h3>'.date(DATE_RFC822, $row['created']).' (';
   CRUD::renderEditLink("journal", $row['id']);
   echo ')</h3>';
-  echo '<p>'.$row['content'].'</p>';
+  echo '<p>'.nl2br($row['content']).'</p>';
   $count++;
 }
 if ($count == 0) {
