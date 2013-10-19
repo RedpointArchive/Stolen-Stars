@@ -39,6 +39,7 @@ if ($result['planet_id'] !== null) {
 <?php
 }
 ?> &bull; 
-<?php CRUD::renderEditLink("place", $result['id']); ?>
+<?php CRUD::renderEditLink("place", $result['id']); ?> &bull; 
+<?php CRUD::renderNewLink("place"); ?>
 <?php list_players($db, "
 WHERE player.place_id = :param", $_GET['id']); ?>

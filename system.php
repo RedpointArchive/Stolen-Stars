@@ -17,7 +17,8 @@ if (!$result) die('No such system.');
 <h1><?php echo $result['name']; ?> System</h1>
 <p><?php echo nl2br($result['notes']); ?></p>
 <a href="/">Back</a> &bull; 
-<?php CRUD::renderEditLink("system", $result['id']); ?>
+<?php CRUD::renderEditLink("system", $result['id']); ?> &bull; 
+<?php CRUD::renderNewLink("system"); ?>
 <h2>Planets</h2>
 <ul>
 <?php
