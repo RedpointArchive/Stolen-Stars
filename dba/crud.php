@@ -52,11 +52,11 @@ final class CRUD {
     echo self::getEditLink($text, $type, -1, $additional);
   }
   
-  public static function renderEditLink($type, $id, $additional) {
+  public static function renderEditLink($type, $id, $additional = null) {
     echo self::getEditLink('Edit', $type, $id, $additional);
   }
   
-  public static function renderNewLink($type, $additional) {
+  public static function renderNewLink($type, $additional = null) {
     echo self::getEditLink('New', $type, -1, $additional);
   }
 
