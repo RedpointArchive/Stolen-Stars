@@ -97,7 +97,9 @@ $stmt->bindValue(":id", $_GET['id']);
 $stmt->execute();
 $count = 0;
 while ($row = $stmt->fetch()) {
-  echo '<h3>'.date(DATE_RFC822, $row['created']).'</h3>';
+  echo '<h3>'.date(DATE_RFC822, $row['created']).' (';
+  CRUD::renderEditLink("journal", $row['id']);
+  echo ')</h3>';
   echo '<p>'.$row['content'].'</p>';
   $count++;
 }
@@ -105,4 +107,4 @@ if ($count == 0) {
   echo 'This character has no journal entries.';
 }
 ?>
-<p><a href="/journal.php?id=<?php echo $_GET['id']; ?>">Create new journal entry</a></p>
+<p><?php CRUD::renderNewLinkWithText("Create new journal entry", "journal", array("player_id" => $_GET['id'])); ?></p>

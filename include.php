@@ -17,6 +17,7 @@ require 'lib/stats.php';
 require 'lib/inventory.php';
 require 'lib/system.php';
 require 'lib/auth.php';
+require 'lib/journal.php';
 
 $db = ss_pdo_connect();
 

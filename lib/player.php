@@ -1,5 +1,14 @@
 <?php
 
+class Player extends DAO {
+  protected $party_id;
+  protected $place_id;
+  protected $name;
+  protected $real_name;
+  protected $stats_id;
+  protected $inventory_id;
+}
+
 function player_get_life_points($stats) {
   return $stats['strength'] + $stats['willpower'];
 }

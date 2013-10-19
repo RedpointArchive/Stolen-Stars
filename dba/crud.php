@@ -8,6 +8,9 @@ final class CRUD {
   const EDITOR_BOOLEAN = "boolean";
   const EDITOR_PASSWORD = "password";
   const EDITOR_DESCRIPTION = "description";
+  const EDITOR_DATE = "date";
+  
+  const DATETIME_FORMAT = "Y-m-d\TH:i";
    
   private $db;
   private $obj;
@@ -16,23 +19,57 @@ final class CRUD {
   private $return_url;
   private $editors;
   private $log_source;
+  private $fixed_values;
+  private $friendly_names;
+  private $defaults;
   
-  public static function renderEditLink($type, $id) {
-    echo '<a href="/edit_anything.php?';
-    echo 'class='.$type.'&amp;';
-    echo 'id='.$id.'&amp;';
-    echo 'r='.urlencode($_SERVER['REQUEST_URI']).'">Edit</a>';
+  public static function getEditLink($text, $type, $id, $additional) {
+    if ($additional == null) {
+      $additional = array();
+    }
+    $result = '<a href="/edit.php?';
+    $result .= 'class='.$type.'&amp;';
+    $result .= 'id='.$id.'&amp;';
+    $result .= 'r='.urlencode($_SERVER['REQUEST_URI']);
+    foreach ($additional as $key => $value) {
+      $result .= '&amp;'.$key.'='.urlencode($value);
+    }
+    $result .= '">'.$text.'</a>';
+    return $result;
+  }
+  
+  public static function getNewLink($text, $type, $additional) {
+    echo self::getEditLink($text, $type, -1, $additional);
+  }
+  
+  public static function renderEditLinkWithText($text, $type, $id, $additional) {
+    echo self::getEditLink($text, $type, $id, $additional);
+  }
+  
+  public static function renderNewLinkWithText($text, $type, $additional) {
+    echo self::getEditLink($text, $type, -1, $additional);
+  }
+  
+  public static function renderEditLink($type, $id, $additional) {
+    echo self::getEditLink('Edit', $type, $id, $additional);
+  }
+  
+  public static function renderNewLink($type, $additional) {
+    echo self::getEditLink('New', $type, -1, $additional);
   }
 
   public function __construct($db, $class, $id) {
     $this->db = $db;
-    $this->id = $id;
+    $this->id = (int)$id;
     $this->obj = new $class($db);
-    if ($this->id != -1) {
+    if ($this->id !== -1) {
       $this->obj->load($this->id);
     }
     $this->class_name = $class;
     $this->editors = array();
+    $this->fixed_values = array();
+    $this->friendly_names = array();
+    $this->defaults = array();
   }
   
   public function getFormAction() {
@@ -59,10 +96,27 @@ final class CRUD {
     $this->editors[$name] = $type;
   }
   
+  public function setFixedValue($name, $value) {
+    $this->fixed_values[$name] = $value;
+  }
+  
+  public function setFriendlyName($name, $value) {
+    $this->friendly_names[$name] = $value;
+  }
+  
+  public function setDefault($name, $value) {
+    $this->defaults[$name] = $value;
+  }
+  
   public function getEditor($name) {
     $editor = $this->editors[$name];
     $get_method = "get".str_replace("_", "", $name);
     $value = $this->obj->$get_method();
+    if ($this->id === -1) {
+      if (isset($this->defaults[$name])) {
+        $value = $this->defaults[$name];
+      }
+    }
     switch ($editor) {
       case self::EDITOR_TEXT:
         echo '<input type="text" name="'.$name.'" value="'.$value.'" />';
@@ -101,6 +155,9 @@ final class CRUD {
         echo $value;
         echo '</textarea>';
         break;
+      case self::EDITOR_DATE:
+        echo '<input type="datetime-local" name="'.$name.'" value="'.date(self::DATETIME_FORMAT, $value).'" />';
+        break;
     }
   }
   
@@ -117,6 +174,9 @@ final class CRUD {
         }
         if (in_array($key, $this->obj->getProperties())) {
           $set_method = "set".str_replace("_", "", $key);
+          if ($this->editors[$key] == self::EDITOR_DATE) {
+            $value = strtotime($value);
+          }
           $this->obj->$set_method($value);
         }
       }
@@ -135,8 +195,17 @@ final class CRUD {
     $this->obj->save();
     
     if ($this->getLogSource() !== null) {
-      $get_method = "get".$this->getLogSource();
-      create_log($this->db, $this->obj->$get_method().' was edited');
+      $name = null;
+      $log_source = $this->getLogSource();
+      if (is_callable($log_source)) {
+        $name = $log_source($this->obj);
+      } else {
+        $get_method = "get".$this->getLogSource();
+        $name = $this->obj->$get_method();
+      }
+      if (!empty($name)) {
+        create_log($this->db, $name.' was edited');
+      }
     }
     
     // Redirect.
@@ -166,10 +235,6 @@ final class CRUD {
     echo '<form action="'.$this->getFormAction().'" method="post">';
     echo '<h2>'.ucwords($this->class_name).'</h2>';
     echo '<table>';
-    echo '  <tr>';
-    echo '    <th width="200">Key</th>';
-    echo '    <th>Value</th>';
-    echo '  </tr>';
     foreach ($this->obj->getProperties() as $key => $value) {
       if ($value === "id") {
         continue;
@@ -180,8 +245,19 @@ final class CRUD {
       if ($this->editors[$value] === self::EDITOR_DESCRIPTION) {
         continue;
       }
+      $name = null;
+      if (isset($this->friendly_names[$value])) {
+        $name = $this->friendly_names[$value];
+      } else {
+        $name = ucwords(str_replace("_", " ", $value));
+        
+        // Remove any trailing " Id"
+        if (substr($name, strlen($name) - 3) == ' Id') {
+          $name = substr($name, 0, strlen($name) - 3);
+        }
+      }
       echo '  <tr>';
-      echo '    <td>'.ucwords(str_replace("_", " ", $value)).'</td>';
+      echo '    <td width="200">'.$name.'</td>';
       echo '    <td>';
       echo $this->getEditor($value);
       echo '    </td>';

@@ -5,7 +5,8 @@ $allowed = array(
   'planet',
   'place',
   'system',
-  'ship');
+  'ship',
+  'journal');
 
 if (!in_array($_GET['class'], $allowed)) {
   die('Not allowed to edit this object!');
@@ -42,6 +43,17 @@ switch ($_GET['class']) {
   case "ship":
     $crud->setEditor("name", CRUD::EDITOR_TEXT);
     $crud->setLogSource("name");
+    break;
+  case "journal":
+    $crud->setEditor("player_id", CRUD::EDITOR_LOOKUP);
+    $crud->setEditor("created", CRUD::EDITOR_DATE);
+    $crud->setEditor("content", CRUD::EDITOR_DESCRIPTION);
+    $crud->setLogSource(function($journal) {
+      return $journal->getPlayer()->getName();
+    });
+    $crud->setFriendlyName("created", "Logged");
+    $crud->setDefault("player_id", $_GET['player_id']);
+    $crud->setDefault("created", time());
     break;
 }
   
