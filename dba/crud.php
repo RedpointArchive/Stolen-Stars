@@ -22,6 +22,8 @@ final class CRUD {
   private $fixed_values;
   private $friendly_names;
   private $defaults;
+  private $edit_message_prefix;
+  private $edit_message_suffix;
   
   public static function getEditLink($text, $type, $id, $additional) {
     if ($additional == null) {
@@ -70,6 +72,8 @@ final class CRUD {
     $this->fixed_values = array();
     $this->friendly_names = array();
     $this->defaults = array();
+    $this->edit_message_prefix = "";
+    $this->edit_message_suffix = " was edited";
   }
   
   public function getFormAction() {
@@ -106,6 +110,11 @@ final class CRUD {
   
   public function setDefault($name, $value) {
     $this->defaults[$name] = $value;
+  }
+  
+  public function setEditMessage($prefix, $suffix) {
+    $this->edit_message_prefix = $prefix;
+    $this->edit_message_suffix = $suffix;
   }
   
   public function getEditor($name) {
@@ -204,7 +213,9 @@ final class CRUD {
         $name = $this->obj->$get_method();
       }
       if (!empty($name)) {
-        create_log($this->db, $name.' was edited');
+        create_log(
+          $this->db,
+          $this->edit_message_prefix.$name.$this->edit_message_suffix);
       }
     }
     

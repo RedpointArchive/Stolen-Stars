@@ -54,6 +54,7 @@ switch ($_GET['class']) {
     $crud->setFriendlyName("created", "Logged");
     $crud->setDefault("player_id", $_GET['player_id']);
     $crud->setDefault("created", time());
+    $crud->setEditMessage("", "'s journal was updated");
     break;
 }
   
