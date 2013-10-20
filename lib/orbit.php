@@ -221,22 +221,7 @@ function render_orbit_map($name, $id) {
   $diff = time() - strtotime("00:00");
   $result = (float)$diff / (24 * 60 * 60);
 ?>
-<img id="current" src="/orbit.php?<?php echo $name; ?>=<?php echo $id; ?>&amp;time=<?php echo $result; ?>" />
-<img id="projected" src="/orbit.php?<?php echo $name; ?>=<?php echo $id; ?>" style="display: none;" onload="document.getElementById('show_projected').disabled = false;" />
-<br/>
-<input type="checkbox" id="show_projected" onclick="projectedHandle();" disabled="disabled" /> Orbit Projection
-<script type="text/javascript">
-<!--
-function projectedHandle() {
-  if (document.getElementById("show_projected").checked) {
-    document.getElementById("current").style.display = "none";
-    document.getElementById("projected").style.display = "";
-  } else {
-    document.getElementById("current").style.display = "";
-    document.getElementById("projected").style.display = "none";
-  }
-}
--->
-</script>
+<img id="current" src="/orbit.php?<?php echo $name; ?>=<?php echo $id; ?>&amp;time=<?php echo $result; ?>" /><br />
+<a href="/orbit.php?<?php echo $name; ?>=<?php echo $id; ?>">Projected Orbit</a>
 <?php
 }
