@@ -6,6 +6,16 @@ class Planet extends DAO {
   protected $leadership;
   protected $system_id;
   protected $category;
+  protected $color;
+  protected $size;
+  protected $orbit_distance;
+  protected $orbit_position;
+  protected $orbit_parent_planet_id;
+  
+  public function getRelationships() {
+    return array(
+      'orbit_parent_planet_id' => 'planet');
+  }
 }
 
 function get_grouped_planets($db) {

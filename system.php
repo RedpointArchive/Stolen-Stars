@@ -13,19 +13,26 @@ $stmt->execute();
 $result = $stmt->fetch();
 if (!$result) die('No such system.');
 
+$stmt = $db->prepare("SELECT * FROM planet WHERE system_id = :id");
+$stmt->bindValue(':id', $_GET['id']);
+$stmt->execute();
+$planets = array();
+while ($row = $stmt->fetch()) {
+  $planets[] = $row;
+}
+
 ?>
 <h1><?php echo $result['name']; ?> System</h1>
 <p><?php echo nl2br($result['notes']); ?></p>
 <a href="/">Back</a> &bull; 
 <?php CRUD::renderEditLink("system", $result['id']); ?> &bull; 
 <?php CRUD::renderNewLink("system"); ?>
+<h2>Orbital Map</h2>
+<?php render_orbit_map('system_id', $result['id']); ?>
 <h2>Planets</h2>
 <ul>
 <?php
-$stmt = $db->prepare("SELECT * FROM planet WHERE system_id = :id");
-$stmt->bindValue(':id', $_GET['id']);
-$stmt->execute();
-while ($row = $stmt->fetch()) {
+foreach ($planets as $row) {
 ?>
 <li>
   <a href="/planet.php?id=<?php echo $row['id']; ?>">

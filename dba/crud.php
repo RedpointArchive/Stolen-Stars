@@ -9,6 +9,8 @@ final class CRUD {
   const EDITOR_PASSWORD = "password";
   const EDITOR_DESCRIPTION = "description";
   const EDITOR_DATE = "date";
+  const EDITOR_PERCENT = "percent";
+  const EDITOR_COLOR = "color";
   
   const DATETIME_FORMAT = "Y-m-d\TH:i";
    
@@ -24,6 +26,7 @@ final class CRUD {
   private $defaults;
   private $edit_message_prefix;
   private $edit_message_suffix;
+  private $allow_nulls;
   
   public static function getEditLink($text, $type, $id, $additional) {
     if ($additional == null) {
@@ -57,7 +60,7 @@ final class CRUD {
   }
   
   public static function renderNewLink($type, $additional = null) {
-    echo self::getEditLink('New', $type, -1, $additional);
+    echo self::getEditLink('New '.ucwords($type), $type, -1, $additional);
   }
 
   public function __construct($db, $class, $id) {
@@ -74,6 +77,7 @@ final class CRUD {
     $this->defaults = array();
     $this->edit_message_prefix = "";
     $this->edit_message_suffix = " was edited";
+    $this->allow_nulls = array();
   }
   
   public function getFormAction() {
@@ -82,6 +86,14 @@ final class CRUD {
   
   public function getReturnURL() {
     return $this->return_url;
+  }
+  
+  public function allowNull($name) {
+    $this->allow_nulls[$name] = true;
+  }
+  
+  public function preventNull($name) {
+    $this->allow_nulls[$name] = false;
   }
   
   public function setReturnURL($value) {
@@ -133,6 +145,12 @@ final class CRUD {
       case self::EDITOR_NUMBER:
         echo '<input type="number" name="'.$name.'" value="'.$value.'" />';
         break;
+      case self::EDITOR_PERCENT:
+        echo '<input type="number" step="0.01" min="0" max="1" name="'.$name.'" value="'.$value.'" />';
+        break;
+      case self::EDITOR_COLOR:
+        echo '<input type="color" name="'.$name.'" value="'.$value.'" />';
+        break;
       case self::EDITOR_PASSWORD:
         echo '<input type="password" name="'.$name.'" value="" placeholder="Leave blank to not change" />';
         break;
@@ -145,16 +163,32 @@ final class CRUD {
         break;
       case self::EDITOR_LOOKUP:
         // Determine what objects to lookup based on the name.
-        $class_name = str_replace("_", "", substr($name, 0, strlen($name) - 2));
+        $relationships = $this->obj->getRelationships();
+        if (isset($relationships[$name])) {
+          $class_name = $relationships[$name];
+        } else {
+          $class_name = str_replace("_", "", substr($name, 0, strlen($name) - 2));
+        }
         $instance = new $class_name($this->db);
         $options = $instance->loadAll();
         echo '<select name="'.$name.'">';
-        foreach ($options as $option) {
-          $selected = '';
-          if ($option->getID() == $value) {
-            $selected = ' selected="selected"';
+        if (isset($this->allow_nulls[$name]) && $this->allow_nulls[$name]) {
+          $attrs = '';
+          if ($value === null) {
+            $attrs .= ' selected="selected"';
           }
-          echo '<option value="'.$option->getID().'"'.$selected.'>'.
+          echo '<option value=""'.$attrs.'>(none)</option>';
+        }
+        foreach ($options as $option) {
+          $attrs = '';
+          if ($option->getID() == $value) {
+            $attrs .= ' selected="selected"';
+          }
+          if ($option->getID() == $this->obj->getID() && strtolower($class_name) == strtolower($this->class_name)) {
+            // Don't allow the user to pick the same object as ourself.
+            $attrs .= ' disabled="disabled"';
+          }
+          echo '<option value="'.$option->getID().'"'.$attrs.'>'.
             $option->getName().'</option>';
         }
         echo '</select>';
@@ -185,6 +219,11 @@ final class CRUD {
           $set_method = "set".str_replace("_", "", $key);
           if ($this->editors[$key] == self::EDITOR_DATE) {
             $value = strtotime($value);
+          }
+          if ($this->editors[$key] == self::EDITOR_LOOKUP) {
+            if (empty($value)) {
+              $value = null;
+            }
           }
           $this->obj->$set_method($value);
         }

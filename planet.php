@@ -20,6 +20,8 @@ if (!$result) die('No such planet.');
 <a href="/system.php?id=<?php echo $result['system_id']; ?>">Back</a> &bull; 
 <?php CRUD::renderEditLink("planet", $result['id']); ?> &bull; 
 <?php CRUD::renderNewLink("planet"); ?>
+<h2>Orbital Map</h2>
+<?php render_orbit_map('planet_id', $result['id']); ?>
 <h2>Places</h2>
 <ul>
 <?php

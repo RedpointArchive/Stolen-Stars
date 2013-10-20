@@ -18,7 +18,7 @@ abstract class DAO {
     return $this->call($method, $args);
   }
   
-  protected function getRelationships() {
+  public function getRelationships() {
     return array();
   }
   
@@ -57,7 +57,14 @@ abstract class DAO {
     if ($this->$field === null) {
       return null;
     }
-    $obj = new $name($this->db);
+    $relationships = $this->getRelationships();
+    $classname = null;
+    if (isset($relationships[$field])) {
+      $classname = $relationships[$field];
+    } else {
+      $classname = $name;
+    }
+    $obj = new $classname($this->db);
     $obj->load($this->$field);
     return $obj;
   }

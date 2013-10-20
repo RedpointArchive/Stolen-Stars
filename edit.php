@@ -27,6 +27,12 @@ switch ($_GET['class']) {
     $crud->setEditor("notes", CRUD::EDITOR_DESCRIPTION);
     $crud->setEditor("leadership", CRUD::EDITOR_TEXT);
     $crud->setEditor("category", CRUD::EDITOR_TEXT);
+    $crud->setEditor("size", CRUD::EDITOR_NUMBER);
+    $crud->setEditor("color", CRUD::EDITOR_COLOR);
+    $crud->setEditor("orbit_distance", CRUD::EDITOR_NUMBER);
+    $crud->setEditor("orbit_position", CRUD::EDITOR_PERCENT);
+    $crud->setEditor("orbit_parent_planet_id", CRUD::EDITOR_LOOKUP);
+    $crud->allowNull("orbit_parent_planet_id");
     $crud->setLogSource("name");
     break;
   case "place":
