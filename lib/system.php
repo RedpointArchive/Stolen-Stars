@@ -1,6 +1,6 @@
 <?php
 
-class System extends DAO {
+class System extends ManagedDAO {
   protected $name;
   protected $notes;
 }

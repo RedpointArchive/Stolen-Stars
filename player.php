@@ -28,8 +28,14 @@ $stmt->bindValue(':id', $_GET['id']);
 $stmt->execute();
 $result = $stmt->fetch();
 if (!$result) die('No such player.');
+
+$player = new Player($db);
+$player->load($_GET['id']);
+
+$header = getOwnershipDetails($player) . " " . $player->getName();
+
 ?>
-<h1><?php echo $result['name'] ?> (played by <?php echo $result['real_name'] ?>)</h1>
+<h1><?php echo $header ?> (played by <?php echo $result['real_name'] ?>)</h1>
 <p>
   <strong>Plot Points:</strong> <?php echo $result['plot_points']; ?><br/>
   <br/>
@@ -46,9 +52,12 @@ if (!$result) die('No such player.');
 </p>
 <a href="/">Back</a> &bull; 
 <a href="/edit_player.php?id=<?php echo $result['id']; ?>">Edit</a>
+<?php renderOwnershipLinks($player); ?>
 <h2>Skills</h2>
 <?php list_skills($db, $result["stats_id"]); ?>
+<?php if ($player->canManage()) { ?>
 <a href="/edit_skills.php?id=<?php echo $result['stats_id']; ?>">Edit</a>
+<?php } ?>
 <h2>Biography</h2>
 <p><?php echo nl2br($result['bio']); ?></p>
 <h2>Past Events</h2>
@@ -85,7 +94,9 @@ if (!$result) die('No such player.');
 $inv = Inventory::loadFromPlayer($db, $_GET['id']);
 $inv->render();
 ?>
+<?php if ($player->canManage()) { ?>
 <a href="/edit_inventory.php?player_id=<?php echo $_GET['id']; ?>">Edit</a>
+<?php } ?>
 <?php if (trim($result['inventory']) != "") { ?>
 <h3>Additional Inventory</h3>
 <?php } ?>

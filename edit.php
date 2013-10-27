@@ -33,21 +33,34 @@ switch ($_GET['class']) {
     $crud->setEditor("orbit_position", CRUD::EDITOR_PERCENT);
     $crud->setEditor("orbit_parent_planet_id", CRUD::EDITOR_LOOKUP);
     $crud->allowNull("orbit_parent_planet_id");
+    $crud->requireManage("name");
+    $crud->requireManage("system_id");
+    $crud->requireManage("leadership");
+    $crud->requireManage("category");
+    $crud->requireManage("size");
+    $crud->requireManage("color");
+    $crud->requireManage("orbit_distance");
+    $crud->requireManage("orbit_position");
+    $crud->requireManage("orbit_parent_planet_id");
     $crud->setLogSource("name");
     break;
   case "place":
     $crud->setEditor("name", CRUD::EDITOR_TEXT);
     $crud->setEditor("planet_id", CRUD::EDITOR_LOOKUP);
     $crud->setEditor("notes", CRUD::EDITOR_DESCRIPTION);
+    $crud->requireManage("name");
+    $crud->requireManage("planet_id");
     $crud->setLogSource("name");
     break;
   case "system":
     $crud->setEditor("name", CRUD::EDITOR_TEXT);
     $crud->setEditor("notes", CRUD::EDITOR_DESCRIPTION);
+    $crud->requireManage("name");
     $crud->setLogSource("name");
     break;
   case "ship":
     $crud->setEditor("name", CRUD::EDITOR_TEXT);
+    $crud->requireManage("name");
     $crud->setLogSource("name");
     break;
   case "journal":

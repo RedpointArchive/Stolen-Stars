@@ -1,0 +1,23 @@
+ALTER TABLE player
+ADD gm_id INTEGER;
+
+ALTER TABLE player
+ADD owner_id INTEGER;
+
+ALTER TABLE ship
+ADD gm_id INTEGER;
+
+ALTER TABLE ship
+ADD owner_id INTEGER;
+
+ALTER TABLE place
+ADD gm_id INTEGER;
+
+ALTER TABLE place
+ADD owner_id INTEGER;
+
+ALTER TABLE planet
+ADD gm_id INTEGER;
+
+ALTER TABLE planet
+ADD owner_id INTEGER;

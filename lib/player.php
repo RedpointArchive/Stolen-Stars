@@ -1,6 +1,6 @@
 <?php
 
-class Player extends DAO {
+class Player extends ManagedDAO {
   protected $party_id;
   protected $place_id;
   protected $name;

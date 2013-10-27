@@ -27,6 +27,7 @@ final class CRUD {
   private $edit_message_prefix;
   private $edit_message_suffix;
   private $allow_nulls;
+  private $require_manage;
   
   public static function getEditLink($text, $type, $id, $additional) {
     if ($additional == null) {
@@ -78,6 +79,7 @@ final class CRUD {
     $this->edit_message_prefix = "";
     $this->edit_message_suffix = " was edited";
     $this->allow_nulls = array();
+    $this->require_manage = array();
   }
   
   public function getFormAction() {
@@ -94,6 +96,10 @@ final class CRUD {
   
   public function preventNull($name) {
     $this->allow_nulls[$name] = false;
+  }
+  
+  public function requireManage($name) {
+    $this->require_manage[$name] = true;
   }
   
   public function setReturnURL($value) {
@@ -129,6 +135,19 @@ final class CRUD {
     $this->edit_message_suffix = $suffix;
   }
   
+  private function canEdit($name) {
+    if ($this->obj instanceof ManagedDAO) {
+      foreach ($this->require_manage as $field => $require) {
+        if ($field === $name) {
+          if ($require && !$this->obj->canManage()) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
+  
   public function getEditor($name) {
     $editor = $this->editors[$name];
     $get_method = "get".str_replace("_", "", $name);
@@ -138,27 +157,31 @@ final class CRUD {
         $value = $this->defaults[$name];
       }
     }
+    $d = '';
+    if (!$this->canEdit($name)) {
+      $d = ' disabled="disabled"';
+    }
     switch ($editor) {
       case self::EDITOR_TEXT:
-        echo '<input type="text" name="'.$name.'" value="'.$value.'" />';
+        echo '<input type="text" name="'.$name.'" value="'.$value.'"'.$d.' />';
         break;
       case self::EDITOR_NUMBER:
-        echo '<input type="number" name="'.$name.'" value="'.$value.'" />';
+        echo '<input type="number" name="'.$name.'" value="'.$value.'"'.$d.' />';
         break;
       case self::EDITOR_PERCENT:
-        echo '<input type="number" step="0.01" min="0" max="1" name="'.$name.'" value="'.$value.'" />';
+        echo '<input type="number" step="0.01" min="0" max="1" name="'.$name.'" value="'.$value.'"'.$d.' />';
         break;
       case self::EDITOR_COLOR:
-        echo '<input type="color" name="'.$name.'" value="'.$value.'" />';
+        echo '<input type="color" name="'.$name.'" value="'.$value.'"'.$d.' />';
         break;
       case self::EDITOR_PASSWORD:
-        echo '<input type="password" name="'.$name.'" value="" placeholder="Leave blank to not change" />';
+        echo '<input type="password" name="'.$name.'" value=""'.$d.' placeholder="Leave blank to not change" />';
         break;
       case self::EDITOR_BOOLEAN:
         if ($value) {
-          echo '<input type="checkbox" name="'.$name.'" value="true" checked="checked" />';
+          echo '<input type="checkbox" name="'.$name.'" value="true"'.$d.' checked="checked" />';
         } else {
-          echo '<input type="checkbox" name="'.$name.'" value="true" />';
+          echo '<input type="checkbox" name="'.$name.'" value="true"'.$d.' />';
         }
         break;
       case self::EDITOR_LOOKUP:
@@ -171,7 +194,7 @@ final class CRUD {
         }
         $instance = new $class_name($this->db);
         $options = $instance->loadAll();
-        echo '<select name="'.$name.'">';
+        echo '<select name="'.$name.'"'.$d.'>';
         if (isset($this->allow_nulls[$name]) && $this->allow_nulls[$name]) {
           $attrs = '';
           if ($value === null) {
@@ -194,12 +217,12 @@ final class CRUD {
         echo '</select>';
         break;
       case self::EDITOR_DESCRIPTION:
-        echo '<textarea name="'.$name.'" style="width: 80%;" rows="20">';
+        echo '<textarea name="'.$name.'"'.$d.' style="width: 80%;" rows="20">';
         echo $value;
         echo '</textarea>';
         break;
       case self::EDITOR_DATE:
-        echo '<input type="datetime-local" name="'.$name.'" value="'.date(self::DATETIME_FORMAT, $value).'" />';
+        echo '<input type="datetime-local" name="'.$name.'"'.$d.' value="'.date(self::DATETIME_FORMAT, $value).'" />';
         break;
     }
   }
@@ -225,7 +248,9 @@ final class CRUD {
               $value = null;
             }
           }
-          $this->obj->$set_method($value);
+          if ($this->canEdit($key)) {
+            $this->obj->$set_method($value);
+          }
         }
       }
     }
@@ -235,7 +260,9 @@ final class CRUD {
     foreach ($this->editors as $name => $editor) {
       if ($editor == self::EDITOR_BOOLEAN) {
         $set_method = "set".str_replace("_", "", $name);
-        $this->obj->$set_method(isset($_POST[$name]));
+        if ($this->canEdit($name)) {
+          $this->obj->$set_method(isset($_POST[$name]));
+        }
       }
     }
     

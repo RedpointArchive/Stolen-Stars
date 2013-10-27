@@ -19,6 +19,7 @@ require 'lib/system.php';
 require 'lib/auth.php';
 require 'lib/journal.php';
 require 'lib/orbit.php';
+require 'lib/owner.php';
 
 $db = ss_pdo_connect();
 
@@ -105,6 +106,7 @@ if (!$auth->isAnonymous()) {
   right: 20px;
   height: 50px;
   text-align: right;">
+<?php echo $auth->getUser()->getAvatarHTML(); ?>&nbsp;
 <?php echo $auth->getUser()->getUsername(); ?> &bull;
 <?php if ($auth->getUser()->getIsAdministrator()) { ?>
 <a href="/admin/">Admin</a> &bull;

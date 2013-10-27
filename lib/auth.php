@@ -27,6 +27,19 @@ final class User extends DAO {
     }
     return $results[0];
   }
+  
+  public function getAvatarURL() {
+    return 'http://www.gravatar.com/avatar/'.
+      md5(strtolower(trim($this->getEmail())));
+  }
+  
+  public function getAvatarHTML() {
+    $style = 'border: solid 1px grey;';
+    $html  = '<img src="';
+    $html .= $this->getAvatarURL();
+    $html .= '?s=16&d=mm" valign="middle" style="'.$style.'" />';
+    return $html;
+  }
 }
 
 final class Session extends DAO {

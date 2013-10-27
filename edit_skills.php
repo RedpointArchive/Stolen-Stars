@@ -1,6 +1,13 @@
 <?php
 require 'include.php';
 
+$obj = find_skill_related_object($db, $_GET['id']);
+if ($obj !== null && $obj instanceof ManagedDAO) {
+  if (!$obj->canManage()) {
+    die('Not authorized.');
+  }
+}
+
 $stmt = $db->prepare("
 SELECT
   skill.id,

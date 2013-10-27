@@ -18,8 +18,12 @@ $stmt->execute();
 $result = $stmt->fetch();
 if (!$result) die('No such place.');
 
+$place = new Place($db);
+$place->load($_GET['id']);
+$header = getOwnershipDetails($place) . " " . $place->getName();
+
 ?>
-<h1><?php echo $result['name']; ?></h1>
+<h1><?php echo $header; ?></h1>
 <?php
 if ($result['ship_id'] !== null) {
 ?><p><em>This place is the ship
@@ -41,5 +45,6 @@ if ($result['planet_id'] !== null) {
 ?> &bull; 
 <?php CRUD::renderEditLink("place", $result['id']); ?> &bull; 
 <?php CRUD::renderNewLink("place"); ?>
+<?php renderOwnershipLinks($place); ?>
 <?php list_players($db, "
 WHERE player.place_id = :param", $_GET['id']); ?>

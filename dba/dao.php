@@ -22,6 +22,14 @@ abstract class DAO {
     return array();
   }
   
+  public function getDisplayName() {
+    $properties = $this->getProperties();
+    if (isset($properties["name"])) {
+      return $this->getName();
+    }
+    return "(".get_class($this).")";
+  }
+  
   protected function getTableName() {
     static $name = null;
     if (!isset($name)) {
@@ -112,6 +120,9 @@ abstract class DAO {
     $stmt->bindValue(":id", $id);
     $stmt->execute();
     $result = $stmt->fetch();
+    if ($result === null) {
+      throw new Exception("Object not found.");
+    }
     foreach ($this->getProperties() as $key => $value) {
       $this->writeField($key, $result[$value]);
     }
@@ -255,6 +266,71 @@ abstract class DAO {
       $stmt->bindValue(":id", $this->getID());
       $stmt->execute();
       $this->id = -1;
+    }
+  }
+}
+
+/**
+ * An enhanced version of DAO that applies checks for ownership
+ * with the gm_id and owner_id fields.
+ */
+abstract class ManagedDAO extends DAO {
+  protected $gm_id;
+  protected $owner_id;
+  
+  public function getRelationships() {
+    return array(
+      'gm_id' => 'user',
+      'owner_id' => 'user');
+  }
+  
+  /**
+   * Returns whether the current user should be able
+   * to manage the object.
+   */
+  public function canManage() {
+    global $auth;
+    
+    $owner = $this->getOwner();
+    $gm = $this->getGM();
+    
+    // If the owner of the object is null, then we
+    // always allow manage access.
+    if ($owner === null) {
+      return true;
+    }
+    
+    // If the GM is null, then the owner has manage capability,
+    // otherwise the GM has manage capability.
+    if ($gm !== null) {
+      return $auth->getUser()->getID() === $gm->getID();
+    }
+    return $auth->getUser()->getID() === $owner->getID();
+  }
+  
+  /**
+   * Changes the current GM of the object.
+   */
+  public function delegate($newGMID) {
+    // Delegate if the user has permission.
+    if ($this->canManage()) {
+      if ($this->getOwnerID() === $newGMID) {
+        $this->setGMID(null);
+      } else {
+        $this->setGMID($newGMID);
+      }
+      $this->save();
+    }
+  }
+  
+  /**
+   * Allow the owner to recover an object from the GM.
+   */
+  public function recover() {
+    global $auth;
+    if ($this->getOwnerID() === $auth->getUser()->getID()) {
+      $this->setGMID(null);
+      $this->save();
     }
   }
 }

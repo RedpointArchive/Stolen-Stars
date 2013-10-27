@@ -22,8 +22,12 @@ $stmt->execute();
 $result = $stmt->fetch();
 if (!$result) die('No such ship.');
 
+$ship = new Ship($db);
+$ship->load($_GET['id']);
+$header = getOwnershipDetails($ship) . " " . $ship->getName();
+
 ?>
-<h1><?php echo $result['name']; ?> (Ship)</h1>
+<h1><?php echo $header; ?> (Ship)</h1>
 <?php
 if ($result['planet_id'] !== null) {
 ?>
@@ -79,5 +83,6 @@ if ($result['planet_id'] !== null) {
 }
 ?>
 <?php CRUD::renderEditLink("ship", $result['id']); ?>
+<?php renderOwnershipLinks($ship); ?>
 <?php list_players($db, "
 WHERE player.place_id = :param", $result['place_id']); ?>

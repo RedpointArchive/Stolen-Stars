@@ -1,6 +1,12 @@
 <?php
 require 'include.php';
 
+$player = new Player($db);
+$player->load($_GET['player_id']);
+if (!$player->canManage()) {
+  die('Not authorized.');
+}
+
 if ($_GET['player_id'] != null) {
   $get_id = $_GET['player_id'];
   $inv = Inventory::loadFromPlayer($db, $get_id);

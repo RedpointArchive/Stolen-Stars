@@ -30,60 +30,94 @@ $stmt->execute();
 $result = $stmt->fetch();
 if (!$result) die('No such player.');
 
+$player = new Player($db);
+$player->load($_GET['id']);
+
 if (array_key_exists('submit', $_POST)) {
-  $stmt = $db->prepare("
-  UPDATE player
-  SET
-    name = :name,
-    real_name = :real_name
-  WHERE id = :id");
-  $stmt->bindValue(':id', $result['id']);
-  $stmt->bindValue(':name', $_POST['name']);
-  $stmt->bindValue(':real_name', $_POST['real_name']);
-  $stmt->execute();
-  
-  if ($result['stats_id'] === null) {
-    $stmt = $db->prepare("INSERT INTO stats (bio) VALUES ('');");
+  if (!$player->canManage()) {
+    // Player editing their bio, etc.
+    if ($result['stats_id'] === null) {
+      $stmt = $db->prepare("INSERT INTO stats (bio) VALUES ('');");
+      $stmt->execute();
+      $stats_id = $db->lastInsertRowID();
+    } else {
+      $stats_id = $result['stats_id'];
+    }
+    $stmt = $db->prepare("
+    UPDATE stats
+    SET
+      bio = :bio,
+      inventory = :inventory,
+      past = :past,
+      goal = :goal
+    WHERE id = :id");
+    $stmt->bindValue(':id', $stats_id);
+    $stmt->bindValue(':bio', $_POST['bio']);
+    $stmt->bindValue(':inventory', $_POST['inventory']);
+    $stmt->bindValue(':past', $_POST['past']);
+    $stmt->bindValue(':goal', $_POST['goal']);
     $stmt->execute();
-    $stats_id = $db->lastInsertRowID();
   } else {
-    $stats_id = $result['stats_id'];
+    // Full management.
+    $stmt = $db->prepare("
+    UPDATE player
+    SET
+      name = :name,
+      real_name = :real_name
+    WHERE id = :id");
+    $stmt->bindValue(':id', $result['id']);
+    $stmt->bindValue(':name', $_POST['name']);
+    $stmt->bindValue(':real_name', $_POST['real_name']);
+    $stmt->execute();
+    
+    if ($result['stats_id'] === null) {
+      $stmt = $db->prepare("INSERT INTO stats (bio) VALUES ('');");
+      $stmt->execute();
+      $stats_id = $db->lastInsertRowID();
+    } else {
+      $stats_id = $result['stats_id'];
+    }
+    $stmt = $db->prepare("
+    UPDATE stats
+    SET
+      bio = :bio,
+      inventory = :inventory,
+      past = :past,
+      goal = :goal,
+      plot_points = :plot_points,
+      wounds = :wounds,
+      stun = :stun,
+      strength = :strength,
+      agility = :agility,
+      intelligence = :intelligence,
+      willpower = :willpower,
+      alertness = :alertness
+    WHERE id = :id");
+    $stmt->bindValue(':id', $stats_id);
+    $stmt->bindValue(':bio', $_POST['bio']);
+    $stmt->bindValue(':inventory', $_POST['inventory']);
+    $stmt->bindValue(':past', $_POST['past']);
+    $stmt->bindValue(':goal', $_POST['goal']);
+    $stmt->bindValue(':plot_points', $_POST['plot_points']);
+    $stmt->bindValue(':wounds', $_POST['wounds']);
+    $stmt->bindValue(':stun', $_POST['stun']);
+    $stmt->bindValue(':strength', $_POST['strength']);
+    $stmt->bindValue(':agility', $_POST['agility']);
+    $stmt->bindValue(':intelligence', $_POST['intelligence']);
+    $stmt->bindValue(':willpower', $_POST['willpower']);
+    $stmt->bindValue(':alertness', $_POST['alertness']);
+    $stmt->execute();
   }
-  $stmt = $db->prepare("
-  UPDATE stats
-  SET
-    bio = :bio,
-    inventory = :inventory,
-    past = :past,
-    goal = :goal,
-    plot_points = :plot_points,
-    wounds = :wounds,
-    stun = :stun,
-    strength = :strength,
-    agility = :agility,
-    intelligence = :intelligence,
-    willpower = :willpower,
-    alertness = :alertness
-  WHERE id = :id");
-  $stmt->bindValue(':id', $stats_id);
-  $stmt->bindValue(':bio', $_POST['bio']);
-  $stmt->bindValue(':inventory', $_POST['inventory']);
-  $stmt->bindValue(':past', $_POST['past']);
-  $stmt->bindValue(':goal', $_POST['goal']);
-  $stmt->bindValue(':plot_points', $_POST['plot_points']);
-  $stmt->bindValue(':wounds', $_POST['wounds']);
-  $stmt->bindValue(':stun', $_POST['stun']);
-  $stmt->bindValue(':strength', $_POST['strength']);
-  $stmt->bindValue(':agility', $_POST['agility']);
-  $stmt->bindValue(':intelligence', $_POST['intelligence']);
-  $stmt->bindValue(':willpower', $_POST['willpower']);
-  $stmt->bindValue(':alertness', $_POST['alertness']);
-  $stmt->execute();
   
   create_log($db, $result['name'].' was edited');
   
   header('Location: /player.php?id='.$_GET['id']);
   die();
+}
+
+$d = '';
+if (!$player->canManage()) {
+  $d = ' disabled="disabled"';
 }
 
 ?>
@@ -98,15 +132,15 @@ if (array_key_exists('submit', $_POST)) {
   </tr>
   <tr>
     <td>Character Name</td>
-    <td><input name="name" value="<?php echo $result['name']; ?>" /></td>
+    <td><input name="name" value="<?php echo $result['name']; ?>"<?php echo $d; ?> /></td>
   </tr>
   <tr>
     <td>Person Name</td>
-    <td><input name="real_name" value="<?php echo $result['real_name']; ?>" /></td>
+    <td><input name="real_name" value="<?php echo $result['real_name']; ?>"<?php echo $d; ?> /></td>
   </tr>
   <tr>
     <td>Plot Points</td>
-    <td><input name="plot_points" value="<?php echo $result['plot_points']; ?>" type="number" /></td>
+    <td><input name="plot_points" value="<?php echo $result['plot_points']; ?>"<?php echo $d; ?> type="number" /></td>
   </tr>
   <tr>
     <td>Life Points</td>
@@ -114,11 +148,11 @@ if (array_key_exists('submit', $_POST)) {
   </tr>
   <tr>
     <td>Wounds</td>
-    <td><input name="wounds" value="<?php echo $result['wounds']; ?>" type="number" /></td>
+    <td><input name="wounds" value="<?php echo $result['wounds']; ?>"<?php echo $d; ?> type="number" /></td>
   </tr>
   <tr>
     <td>Stun</td>
-    <td><input name="stun" value="<?php echo $result['stun']; ?>" type="number" /></td>
+    <td><input name="stun" value="<?php echo $result['stun']; ?>"<?php echo $d; ?> type="number" /></td>
   </tr>
   <tr>
     <td>Initiative</td>
@@ -126,23 +160,23 @@ if (array_key_exists('submit', $_POST)) {
   </tr>
   <tr>
     <td>Strength</td>
-    <td><input name="strength" value="<?php echo $result['strength']; ?>" type="number" /></td>
+    <td><input name="strength" value="<?php echo $result['strength']; ?>"<?php echo $d; ?> type="number" /></td>
   </tr>
   <tr>
     <td>Agility</td>
-    <td><input name="agility" value="<?php echo $result['agility']; ?>" type="number" /></td>
+    <td><input name="agility" value="<?php echo $result['agility']; ?>"<?php echo $d; ?> type="number" /></td>
   </tr>
   <tr>
     <td>Intelligence</td>
-    <td><input name="intelligence" value="<?php echo $result['intelligence']; ?>" type="number" /></td>
+    <td><input name="intelligence" value="<?php echo $result['intelligence']; ?>"<?php echo $d; ?> type="number" /></td>
   </tr>
   <tr>
     <td>Willpower</td>
-    <td><input name="willpower" value="<?php echo $result['willpower']; ?>" type="number" /></td>
+    <td><input name="willpower" value="<?php echo $result['willpower']; ?>"<?php echo $d; ?> type="number" /></td>
   </tr>
   <tr>
     <td>Alertness</td>
-    <td><input name="alertness" value="<?php echo $result['alertness']; ?>" type="number" /></td>
+    <td><input name="alertness" value="<?php echo $result['alertness']; ?>"<?php echo $d; ?> type="number" /></td>
   </tr>
 </table>
 <h2>Biography</h2>

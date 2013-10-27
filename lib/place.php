@@ -1,6 +1,6 @@
 <?php
 
-class Place extends DAO {
+class Place extends ManagedDAO {
   protected $planet_id;
   protected $name;
   protected $notes;

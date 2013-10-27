@@ -1,6 +1,6 @@
 <?php
 
-class Planet extends DAO {
+class Planet extends ManagedDAO {
   protected $name;
   protected $notes;
   protected $leadership;
@@ -14,7 +14,7 @@ class Planet extends DAO {
   
   public function getRelationships() {
     return array(
-      'orbit_parent_planet_id' => 'planet');
+      'orbit_parent_planet_id' => 'planet') + parent::getRelationships();
   }
 }
 

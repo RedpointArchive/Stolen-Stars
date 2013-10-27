@@ -1,6 +1,6 @@
 <?php
 
-class Ship extends DAO {
+class Ship extends ManagedDAO {
   protected $place_id;
   protected $system_id;
   protected $name;
