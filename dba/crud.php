@@ -136,6 +136,9 @@ final class CRUD {
   }
   
   private function canEdit($name) {
+    if ($this->id === -1) {
+      return true;
+    }
     if ($this->obj instanceof ManagedDAO) {
       foreach ($this->require_manage as $field => $require) {
         if ($field === $name) {
@@ -264,6 +267,13 @@ final class CRUD {
           $this->obj->$set_method(isset($_POST[$name]));
         }
       }
+    }
+    
+    // If we're creating a new object then the user becomes the
+    // owner implicitly.
+    if ($this->id === -1 && $this->obj instanceof ManagedDAO) {
+      global $auth;
+      $this->obj->setOwnerID($auth->getUser()->getID());
     }
     
     // Save the object.
