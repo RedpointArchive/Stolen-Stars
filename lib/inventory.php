@@ -1,5 +1,10 @@
 <?php
 
+final class ItemDAO extends DAO {
+  protected $name;
+  protected $has_quantity;
+}
+
 final class Item {
   private $db;
   private $id;

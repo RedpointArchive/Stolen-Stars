@@ -7,4 +7,5 @@ require '../include.php';
 <ul>
   <li><a href="/admin/users.php">Manage Users</a></li>
   <li><a href="/admin/skills.php">Manage Skills</a></li>
+  <li><a href="/admin/items.php">Manage Items</a></li>
 </ul>
