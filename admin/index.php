@@ -8,4 +8,5 @@ require '../include.php';
   <li><a href="/admin/users.php">Manage Users</a></li>
   <li><a href="/admin/skills.php">Manage Skills</a></li>
   <li><a href="/admin/items.php">Manage Items</a></li>
+  <li><a href="/admin/cleanup_skill.php">Cleanup Bad Skills</a></li>
 </ul>

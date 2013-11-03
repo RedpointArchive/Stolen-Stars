@@ -86,16 +86,20 @@ WHERE id = :id");
       $stmt->bindValue(':value', $_POST[$key]);
       $stmt->execute();
     }
-    if ($key == 'newtype') {
-      $stmt = $db->prepare("
+    if (substr($key, 0, 7) == 'newtype') {
+      $id = (int)substr($key, 7);
+      
+      if ($_POST['newtype'.$id] !== -1) {
+        $stmt = $db->prepare("
 INSERT INTO stats_skill
 (stats_id, skill_id, value)
 VALUES
 (:stats_id, :skill_id, :value)");
-      $stmt->bindValue(':stats_id', $_GET['id']);
-      $stmt->bindValue(':skill_id', $_POST['newtype']);
-      $stmt->bindValue(':value', $_POST['newval']);
-      $stmt->execute();
+        $stmt->bindValue(':stats_id', $_GET['id']);
+        $stmt->bindValue(':skill_id', $_POST['newtype'.$id]);
+        $stmt->bindValue(':value', $_POST['newval'.$id]);
+        $stmt->execute();
+      }
     }
   }
   create_log($db, "The skills of ".find_skill_related_name($db, $_GET['id'])." were edited");
@@ -143,9 +147,10 @@ VALUES
   </tr>
 <?php
   }
+  for ($i = 0; $i < 10; $i++) {
 ?>
   <tr>
-    <td><select name="newtype"><option value="-1">(nothing)</option><?php
+    <td><select name="newtype<?php echo $i; ?>"><option value="-1">(nothing)</option><?php
     foreach ($all_skills as $skilltype) {
       $name = $skilltype['name'];
       if ($skilltype['parent_id'] !== null) {
@@ -159,9 +164,10 @@ VALUES
     }
 ?></td>
     <td>
-      <input type="number" name="newval" value="" />
+      <input type="number" name="newval<?php echo $i; ?>" value="" />
     </td>
   </tr>
+<?php } ?>
 </table>
 <br/>
 <input type="submit" name="submit" value="Save All Changes!" />
