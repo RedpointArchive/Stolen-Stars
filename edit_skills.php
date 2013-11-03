@@ -89,7 +89,7 @@ WHERE id = :id");
     if (substr($key, 0, 7) == 'newtype') {
       $id = (int)substr($key, 7);
       
-      if ($_POST['newtype'.$id] !== -1) {
+      if ((int)$_POST['newtype'.$id] !== -1) {
         $stmt = $db->prepare("
 INSERT INTO stats_skill
 (stats_id, skill_id, value)
