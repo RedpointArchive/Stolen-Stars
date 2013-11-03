@@ -1,5 +1,15 @@
 <?php
 
+class Skill extends DAO {
+  protected $parent_id;
+  protected $name;
+  
+  public function getRelationships() {
+    return array(
+      'parent_id' => 'skill') + parent::getRelationships();
+  }
+}
+
 function list_skills($db, $stats_id) {
   $stmt = $db->prepare("
 SELECT
