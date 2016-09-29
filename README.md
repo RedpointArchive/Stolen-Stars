@@ -8,7 +8,7 @@ To run this container, map an port to 9090.  By default, data is stored in an SQ
 An example of running this container:
 
 ```
-docker run -p 9090:9090 hachque/stolenstars
+docker run -p 9090:9090 redpointgames/stolen-stars
 ```
 
 The default username is `admin` and the password is `test`.
