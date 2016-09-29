@@ -1,2 +1,2 @@
 # Ignore SQLite database.
-db.sqlite3
+src/db.sqlite3
