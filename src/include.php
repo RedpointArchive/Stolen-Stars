@@ -1,5 +1,7 @@
 <?php
 
+ob_start();
+
 date_default_timezone_set("Australia/Melbourne");
 
 chdir(realpath(dirname(__FILE__)));
@@ -31,10 +33,15 @@ $version = $query->fetch();
 $version = $version["version"];
 $max = find_highest_patch();
 if ($version < $max) {
-  apply_patches($db, $version, $max);
+  $applied = apply_patches($db, $version, $max);
   $stmt = $db->prepare("UPDATE info SET version = :new");
   $stmt->bindValue(":new", $max);
   $stmt->execute();
+  if ($applied) {
+    // Force a refresh.
+    echo "<script>location.reload();</script>";
+    die();
+  }
 }
 
 $auth = new Auth($db);
@@ -81,20 +88,24 @@ function find_highest_patch() {
 
 function apply_patches($db, $current, $max) {
   $name = ss_pdo_name();
+  $applied = false;
   for ($i = $current + 1; $i <= $max; $i++) {
     if (file_exists("patch/$i.sql")) {
       $db->exec(
         ss_pdo_transform(
           file_get_contents("patch/$i.sql")));
       echo "Applied SQL patch $i...<br />";
+      $applied = true;
     }
     if (file_exists("patch/".$i."_".$name.".sql")) {
       $db->exec(
         ss_pdo_transform(
           file_get_contents("patch/".$i."_".$name.".sql")));
       echo "Applied SQL patch $i ($name)...<br />";
+      $applied = true;
     }
   }
+  return $applied;
 }
 
 // Output the user information in the top-right.
@@ -116,4 +127,5 @@ if (!$auth->isAnonymous()) {
 </div>
 <?php
 }
+
 ?>

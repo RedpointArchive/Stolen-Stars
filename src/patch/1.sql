@@ -29,7 +29,7 @@ VALUES (
   (SELECT id FROM party WHERE name = 'Stolen Stars Group'),
   (SELECT id FROM place WHERE name = 'The Black Arc'),
   'Javair Sana',
-  'James'
+  'June'
 ),
 (
   (SELECT id FROM party WHERE name = 'Stolen Stars Group'),
